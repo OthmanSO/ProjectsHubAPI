@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectHubAPI", "WebApplication1\ProjectHubAPI.csproj", "{91F9890D-A3A8-42F9-BD80-A5E848BD9B05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectsHub.Data", "ProjectsHub.Data\ProjectsHub.Data.csproj", "{25528036-AA82-4AA3-A289-18443AC4E6EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91F9890D-A3A8-42F9-BD80-A5E848BD9B05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91F9890D-A3A8-42F9-BD80-A5E848BD9B05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91F9890D-A3A8-42F9-BD80-A5E848BD9B05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91F9890D-A3A8-42F9-BD80-A5E848BD9B05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25528036-AA82-4AA3-A289-18443AC4E6EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25528036-AA82-4AA3-A289-18443AC4E6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25528036-AA82-4AA3-A289-18443AC4E6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25528036-AA82-4AA3-A289-18443AC4E6EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0C87DF7-5456-4428-84B7-787B48D00D73}
+	EndGlobalSection
+EndGlobal
