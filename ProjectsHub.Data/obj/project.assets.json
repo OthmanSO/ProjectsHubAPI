@@ -14,6 +14,15 @@
           "lib/net5.0/DnsClient.dll": {}
         }
       },
+      "Microsoft.Extensions.Logging.Abstractions/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {}
+        }
+      },
       "Microsoft.NETCore.Platforms/5.0.0": {
         "type": "package",
         "compile": {
@@ -42,7 +51,7 @@
           }
         }
       },
-      "MongoDB.Bson/2.17.1": {
+      "MongoDB.Bson/2.18.0": {
         "type": "package",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "5.0.0"
@@ -54,12 +63,13 @@
           "lib/netstandard2.1/MongoDB.Bson.dll": {}
         }
       },
-      "MongoDB.Driver/2.17.1": {
+      "MongoDB.Driver/2.18.0": {
         "type": "package",
         "dependencies": {
-          "MongoDB.Bson": "2.17.1",
-          "MongoDB.Driver.Core": "2.17.1",
-          "MongoDB.Libmongocrypt": "1.5.5"
+          "Microsoft.Extensions.Logging.Abstractions": "2.0.0",
+          "MongoDB.Bson": "2.18.0",
+          "MongoDB.Driver.Core": "2.18.0",
+          "MongoDB.Libmongocrypt": "1.6.0"
         },
         "compile": {
           "lib/netstandard2.1/MongoDB.Driver.dll": {}
@@ -68,63 +78,26 @@
           "lib/netstandard2.1/MongoDB.Driver.dll": {}
         }
       },
-      "MongoDB.Driver.Core/2.17.1": {
+      "MongoDB.Driver.Core/2.18.0": {
         "type": "package",
         "dependencies": {
           "DnsClient": "1.6.1",
-          "MongoDB.Bson": "2.17.1",
-          "MongoDB.Libmongocrypt": "1.5.5",
+          "Microsoft.Extensions.Logging.Abstractions": "2.0.0",
+          "MongoDB.Bson": "2.18.0",
+          "MongoDB.Libmongocrypt": "1.6.0",
           "SharpCompress": "0.30.1",
-          "System.Buffers": "4.5.1"
+          "Snappier": "1.0.0",
+          "System.Buffers": "4.5.1",
+          "ZstdSharp.Port": "0.6.2"
         },
         "compile": {
           "lib/netstandard2.1/MongoDB.Driver.Core.dll": {}
         },
         "runtime": {
           "lib/netstandard2.1/MongoDB.Driver.Core.dll": {}
-        },
-        "contentFiles": {
-          "contentFiles/any/any/_._": {
-            "buildAction": "None",
-            "codeLanguage": "any",
-            "copyToOutput": false
-          }
-        },
-        "build": {
-          "build/_._": {}
-        },
-        "runtimeTargets": {
-          "runtimes/linux/native/libsnappy64.so": {
-            "assetType": "native",
-            "rid": "linux"
-          },
-          "runtimes/linux/native/libzstd.so": {
-            "assetType": "native",
-            "rid": "linux"
-          },
-          "runtimes/osx/native/libsnappy64.dylib": {
-            "assetType": "native",
-            "rid": "osx"
-          },
-          "runtimes/osx/native/libzstd.dylib": {
-            "assetType": "native",
-            "rid": "osx"
-          },
-          "runtimes/win/native/libzstd.dll": {
-            "assetType": "native",
-            "rid": "win"
-          },
-          "runtimes/win/native/snappy32.dll": {
-            "assetType": "native",
-            "rid": "win"
-          },
-          "runtimes/win/native/snappy64.dll": {
-            "assetType": "native",
-            "rid": "win"
-          }
         }
       },
-      "MongoDB.Libmongocrypt/1.5.5": {
+      "MongoDB.Libmongocrypt/1.6.0": {
         "type": "package",
         "compile": {
           "lib/netstandard2.1/MongoDB.Libmongocrypt.dll": {}
@@ -164,6 +137,15 @@
         },
         "runtime": {
           "lib/net5.0/SharpCompress.dll": {}
+        }
+      },
+      "Snappier/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/Snappier.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Snappier.dll": {}
         }
       },
       "System.Buffers/4.5.1": {
@@ -221,6 +203,25 @@
             "rid": "win"
           }
         }
+      },
+      "ZstdSharp.Port/0.6.2": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/ZstdSharp.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/ZstdSharp.dll": {}
+        }
+      },
+      "ProjectsHub.Model/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/ProjectsHub.Model.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ProjectsHub.Model.dll": {}
+        }
       }
     }
   },
@@ -247,6 +248,19 @@
         "lib/netstandard2.0/DnsClient.xml",
         "lib/netstandard2.1/DnsClient.dll",
         "lib/netstandard2.1/DnsClient.xml"
+      ]
+    },
+    "Microsoft.Extensions.Logging.Abstractions/2.0.0": {
+      "sha512": "6ZCllUYGFukkymSTx3Yr0G/ajRxoNJp7/FqSxSB4fGISST54ifBhgu4Nc0ItGi3i6DqwuNd8SUyObmiC++AO2Q==",
+      "type": "package",
+      "path": "microsoft.extensions.logging.abstractions/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.xml",
+        "microsoft.extensions.logging.abstractions.2.0.0.nupkg.sha512",
+        "microsoft.extensions.logging.abstractions.nuspec"
       ]
     },
     "Microsoft.NETCore.Platforms/5.0.0": {
@@ -311,10 +325,10 @@
         "version.txt"
       ]
     },
-    "MongoDB.Bson/2.17.1": {
-      "sha512": "IBr5w6ygeUCTobiS4J2UlYeIsnjSJvOOf31g60EkRa3NIeyrYs7Y51HeOvJ8r6NPcKv1hLj8xwoop6hDTetAdA==",
+    "MongoDB.Bson/2.18.0": {
+      "sha512": "iyiVjkCAZIUiyYDZXXUqISeW7n3O/qcM90PUeJybryg7g4rXhSMRY0oLpAg+NdoXD/Qm9LlmVIePAluHQB91tQ==",
       "type": "package",
-      "path": "mongodb.bson/2.17.1",
+      "path": "mongodb.bson/2.18.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -325,15 +339,15 @@
         "lib/netstandard2.0/MongoDB.Bson.xml",
         "lib/netstandard2.1/MongoDB.Bson.dll",
         "lib/netstandard2.1/MongoDB.Bson.xml",
-        "mongodb.bson.2.17.1.nupkg.sha512",
+        "mongodb.bson.2.18.0.nupkg.sha512",
         "mongodb.bson.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Driver/2.17.1": {
-      "sha512": "A5Yvm3RUdkSYnvKWVb/bZfvhzG+L+t0n80JuUXf0p2QG1TbtqHE9hX/FBK+BoF7sw9rzUTw8VHYeqX5rT0rxdA==",
+    "MongoDB.Driver/2.18.0": {
+      "sha512": "nq7wRMeNoqUe+bndHFMDGX8IY3iSmzLoyLzzf8DRos137O+5R4NCsd9qtw/n+DoGFas0gzzyD546Cpz+5AkmLg==",
       "type": "package",
-      "path": "mongodb.driver/2.17.1",
+      "path": "mongodb.driver/2.18.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -344,71 +358,35 @@
         "lib/netstandard2.0/MongoDB.Driver.xml",
         "lib/netstandard2.1/MongoDB.Driver.dll",
         "lib/netstandard2.1/MongoDB.Driver.xml",
-        "mongodb.driver.2.17.1.nupkg.sha512",
+        "mongodb.driver.2.18.0.nupkg.sha512",
         "mongodb.driver.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Driver.Core/2.17.1": {
-      "sha512": "lfuuQvCXcco6mG096PL8xRO+dBdHsDTR3DiYfK/ICHgFlL5RfKlBuE0xClEGKtaZ4Spe28/fF/GUcrrA/yfoAQ==",
+    "MongoDB.Driver.Core/2.18.0": {
+      "sha512": "/X5Ty32gyDyzs/fWFwKGS0QUhfQT3V9Sc/F8yhILBu8bjCjBscOFKQsKieAha8xxBnYS7dZvTvhvEJWT7HgJ1g==",
       "type": "package",
-      "path": "mongodb.driver.core/2.17.1",
+      "path": "mongodb.driver.core/2.18.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "License.txt",
         "THIRD-PARTY-NOTICES",
-        "build/MongoDB.Driver.Core.targets",
-        "content/Core/Compression/Snappy/lib/linux/libsnappy64.so",
-        "content/Core/Compression/Snappy/lib/osx/libsnappy64.dylib",
-        "content/Core/Compression/Snappy/lib/win/snappy32.dll",
-        "content/Core/Compression/Snappy/lib/win/snappy64.dll",
-        "content/Core/Compression/Zstandard/lib/linux/libzstd.so",
-        "content/Core/Compression/Zstandard/lib/osx/libzstd.dylib",
-        "content/Core/Compression/Zstandard/lib/win/libzstd.dll",
-        "contentFiles/any/net472/Core/Compression/Snappy/lib/linux/libsnappy64.so",
-        "contentFiles/any/net472/Core/Compression/Snappy/lib/osx/libsnappy64.dylib",
-        "contentFiles/any/net472/Core/Compression/Snappy/lib/win/snappy32.dll",
-        "contentFiles/any/net472/Core/Compression/Snappy/lib/win/snappy64.dll",
-        "contentFiles/any/net472/Core/Compression/Zstandard/lib/linux/libzstd.so",
-        "contentFiles/any/net472/Core/Compression/Zstandard/lib/osx/libzstd.dylib",
-        "contentFiles/any/net472/Core/Compression/Zstandard/lib/win/libzstd.dll",
-        "contentFiles/any/netstandard2.0/Core/Compression/Snappy/lib/linux/libsnappy64.so",
-        "contentFiles/any/netstandard2.0/Core/Compression/Snappy/lib/osx/libsnappy64.dylib",
-        "contentFiles/any/netstandard2.0/Core/Compression/Snappy/lib/win/snappy32.dll",
-        "contentFiles/any/netstandard2.0/Core/Compression/Snappy/lib/win/snappy64.dll",
-        "contentFiles/any/netstandard2.0/Core/Compression/Zstandard/lib/linux/libzstd.so",
-        "contentFiles/any/netstandard2.0/Core/Compression/Zstandard/lib/osx/libzstd.dylib",
-        "contentFiles/any/netstandard2.0/Core/Compression/Zstandard/lib/win/libzstd.dll",
-        "contentFiles/any/netstandard2.1/Core/Compression/Snappy/lib/linux/libsnappy64.so",
-        "contentFiles/any/netstandard2.1/Core/Compression/Snappy/lib/osx/libsnappy64.dylib",
-        "contentFiles/any/netstandard2.1/Core/Compression/Snappy/lib/win/snappy32.dll",
-        "contentFiles/any/netstandard2.1/Core/Compression/Snappy/lib/win/snappy64.dll",
-        "contentFiles/any/netstandard2.1/Core/Compression/Zstandard/lib/linux/libzstd.so",
-        "contentFiles/any/netstandard2.1/Core/Compression/Zstandard/lib/osx/libzstd.dylib",
-        "contentFiles/any/netstandard2.1/Core/Compression/Zstandard/lib/win/libzstd.dll",
         "lib/net472/MongoDB.Driver.Core.dll",
         "lib/net472/MongoDB.Driver.Core.xml",
         "lib/netstandard2.0/MongoDB.Driver.Core.dll",
         "lib/netstandard2.0/MongoDB.Driver.Core.xml",
         "lib/netstandard2.1/MongoDB.Driver.Core.dll",
         "lib/netstandard2.1/MongoDB.Driver.Core.xml",
-        "mongodb.driver.core.2.17.1.nupkg.sha512",
+        "mongodb.driver.core.2.18.0.nupkg.sha512",
         "mongodb.driver.core.nuspec",
-        "packageIcon.png",
-        "runtimes/linux/native/libsnappy64.so",
-        "runtimes/linux/native/libzstd.so",
-        "runtimes/osx/native/libsnappy64.dylib",
-        "runtimes/osx/native/libzstd.dylib",
-        "runtimes/win/native/libzstd.dll",
-        "runtimes/win/native/snappy32.dll",
-        "runtimes/win/native/snappy64.dll"
+        "packageIcon.png"
       ]
     },
-    "MongoDB.Libmongocrypt/1.5.5": {
-      "sha512": "0DV4l2PjXirSJHD/b+LpOK3IfUDvkbpvvZBM2w1aYL6E/4vbhfyr/FP5laDNx2zRylqN1hIZO+EL7NgO/5GpVg==",
+    "MongoDB.Libmongocrypt/1.6.0": {
+      "sha512": "kh+MMf+ECIf5sQDIqOdKBd75ktD5aD1EuzCX3R4HOUGPlAbeAm8harf4zwlbvFe2BLfCXZO7HajSABLf4P0GNg==",
       "type": "package",
-      "path": "mongodb.libmongocrypt/1.5.5",
+      "path": "mongodb.libmongocrypt/1.6.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -429,7 +407,7 @@
         "lib/net472/MongoDB.Libmongocrypt.dll",
         "lib/netstandard2.0/MongoDB.Libmongocrypt.dll",
         "lib/netstandard2.1/MongoDB.Libmongocrypt.dll",
-        "mongodb.libmongocrypt.1.5.5.nupkg.sha512",
+        "mongodb.libmongocrypt.1.6.0.nupkg.sha512",
         "mongodb.libmongocrypt.nuspec",
         "runtimes/linux/native/libmongocrypt.so",
         "runtimes/osx/native/libmongocrypt.dylib",
@@ -450,6 +428,26 @@
         "lib/netstandard2.1/SharpCompress.dll",
         "sharpcompress.0.30.1.nupkg.sha512",
         "sharpcompress.nuspec"
+      ]
+    },
+    "Snappier/1.0.0": {
+      "sha512": "rFtK2KEI9hIe8gtx3a0YDXdHOpedIf9wYCEYtBEmtlyiWVX3XlCNV03JrmmAi/Cdfn7dxK+k0sjjcLv4fpHnqA==",
+      "type": "package",
+      "path": "snappier/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "COPYING.txt",
+        "lib/net5.0/Snappier.dll",
+        "lib/net5.0/Snappier.xml",
+        "lib/netcoreapp3.0/Snappier.dll",
+        "lib/netcoreapp3.0/Snappier.xml",
+        "lib/netstandard2.0/Snappier.dll",
+        "lib/netstandard2.0/Snappier.xml",
+        "lib/netstandard2.1/Snappier.dll",
+        "lib/netstandard2.1/Snappier.xml",
+        "snappier.1.0.0.nupkg.sha512",
+        "snappier.nuspec"
       ]
     },
     "System.Buffers/4.5.1": {
@@ -616,11 +614,34 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "ZstdSharp.Port/0.6.2": {
+      "sha512": "jPao/LdUNLUz8rn3H1D8W7wQbZsRZM0iayvWI4xGejJg3XJHT56gcmYdgmCGPdJF1UEBqUjucCRrFB+4HbJsbw==",
+      "type": "package",
+      "path": "zstdsharp.port/0.6.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net461/ZstdSharp.dll",
+        "lib/net5.0/ZstdSharp.dll",
+        "lib/net6.0/ZstdSharp.dll",
+        "lib/netcoreapp3.1/ZstdSharp.dll",
+        "lib/netstandard2.0/ZstdSharp.dll",
+        "lib/netstandard2.1/ZstdSharp.dll",
+        "zstdsharp.port.0.6.2.nupkg.sha512",
+        "zstdsharp.port.nuspec"
+      ]
+    },
+    "ProjectsHub.Model/1.0.0": {
+      "type": "project",
+      "path": "../ProjectsHub.Model/ProjectsHub.Model.csproj",
+      "msbuildProject": "../ProjectsHub.Model/ProjectsHub.Model.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "MongoDB.Driver >= 2.17.1"
+      "MongoDB.Driver >= 2.18.0",
+      "ProjectsHub.Model >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -649,7 +670,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\GradProj\\ProjectsHubAPI\\ProjectsHub.Model\\ProjectsHub.Model.csproj": {
+              "projectPath": "D:\\GradProj\\ProjectsHubAPI\\ProjectsHub.Model\\ProjectsHub.Model.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -664,7 +689,7 @@
         "dependencies": {
           "MongoDB.Driver": {
             "target": "Package",
-            "version": "[2.17.1, )"
+            "version": "[2.18.0, )"
           }
         },
         "imports": [
