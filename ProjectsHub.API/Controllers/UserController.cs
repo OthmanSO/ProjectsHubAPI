@@ -35,9 +35,9 @@ namespace ProjectHub.API.Controllers
                 return NotFound();
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier , loggedInUser.UserName ),
-                new Claim(ClaimTypes.Email, loggedInUser.Email),
-
+                new Claim(ClaimTypes.NameIdentifier , loggedInUser._Id.ToString() ),
+                new Claim(ClaimTypes.GivenName , $"{loggedInUser.FirstName} {loggedInUser.LastName}"),
+                new Claim(ClaimTypes.Email, loggedInUser.Email)
             };
 
             var tok = new JwtSecurityToken(
@@ -53,6 +53,5 @@ namespace ProjectHub.API.Controllers
             var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
             return Ok(tokenString);
         }
-
     }
 }
