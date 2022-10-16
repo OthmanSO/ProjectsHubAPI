@@ -6,8 +6,9 @@ using ProjectsHub.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ProjectsHub.API.Exceptions;
 
-namespace ProjectHub.API.Controllers
+namespace ProjectsHub.API.Controllers
 {
     [ApiController]
     [Route("/api/V1.0/usres")]
@@ -23,35 +24,43 @@ namespace ProjectHub.API.Controllers
             _UserRepository.CreateList();
             _Configuration = _conf ?? throw new ArgumentNullException(nameof(IConfiguration));
         }
-
+       
         [HttpPost("/login")]
         public async Task<ActionResult> Login([FromBody] UserAuth user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
-                return BadRequest();
-
-            var loggedInUser = _UserService.GetUser(user.Email, user.Password, _UserRepository);
-            if (loggedInUser == null)
-                return NotFound();
-            var claims = new[]
+                return BadRequest("Missing Email or Password");
+            try
             {
-                new Claim(ClaimTypes.NameIdentifier , loggedInUser._Id.ToString() ),
-                new Claim(ClaimTypes.GivenName , $"{loggedInUser.FirstName} {loggedInUser.LastName}"),
-                new Claim(ClaimTypes.Email, loggedInUser.Email)
-            };
+                var loggedInUser = _UserService.GetLoggedInUser(user.Email, user.Password, _UserRepository);
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier , loggedInUser._Id.ToString() ),
+                    new Claim(ClaimTypes.GivenName , $"{loggedInUser.FirstName} {loggedInUser.LastName}"),
+                    new Claim(ClaimTypes.Email, loggedInUser.Email)
+                };
 
-            var tok = new JwtSecurityToken(
-                issuer: _Configuration["Jwt:Issuer"],
-                audience: _Configuration["Jwt: Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(60),
-                notBefore: DateTime.UtcNow,
-                signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
-                    SecurityAlgorithms.HmacSha256)
-                );
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
-            return Ok(tokenString);
+                var tok = new JwtSecurityToken(
+                    issuer: _Configuration["Jwt:Issuer"],
+                    audience: _Configuration["Jwt: Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMinutes(60),
+                    notBefore: DateTime.UtcNow,
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
+                        SecurityAlgorithms.HmacSha256)
+                    );
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
+                return Ok(tokenString);
+            }
+            catch (NullReferenceException e)
+            {
+                return NotFound("User Not Found");
+            }catch (UserPasswordNotMatchedException e)
+            {
+                return BadRequest("Password Mismatch");
+            }
+
         }
     }
 }
