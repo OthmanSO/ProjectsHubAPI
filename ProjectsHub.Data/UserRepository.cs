@@ -8,18 +8,17 @@ namespace ProjectsHub.Data
     {
         private List<UserAccount> UsersList = new List<UserAccount>();
 
-
         public void CreateList()
         {
-            UsersList.Add(new UserAccount { UserName = "Othman Othman", Email = "Othman@gmail.com", Password = "123" });
-            UsersList.Add(new UserAccount { UserName = "Noor Braik", Email = "Noor@gmail.com", Password = "finish the API" });
-            UsersList.Add(new UserAccount { UserName = "Tariq Sabri", Email = "Tariq@gmail.com", Password = "linux" });
+            UsersList.Add(new UserAccount { _Id = new Guid(), FirstName = "Othman", LastName = "Othman", Email = "othman@gmail.com", Password = "123", ProfilePicture = new Guid()});
+            UsersList.Add(new UserAccount { _Id = new Guid(), FirstName = "Noor", LastName = "Braik", Email = "noor@gmail.com", Password = "finish the API", ProfilePicture =new Guid()});
+            UsersList.Add(new UserAccount { _Id = new Guid(), FirstName = "Tariq", LastName = "Sabri", Email = "tariq@gmail.com", Password = "linux", ProfilePicture = new Guid()});
         }
 
-        public Object? GetUser(String Email, String Password)
+        public Object? GetUserByEmail(String Email)
         {
             return (from userAccount in UsersList
-                    where userAccount.Email == Email && userAccount.Password == Password
+                    where userAccount.Email == Email 
                     select userAccount).FirstOrDefault();
         }
     }

@@ -1,19 +1,21 @@
 ﻿using ProjectsHub.Data;
 using ProjectsHub.Model;
+using ProjectsHub.API.Exceptions;
 
 namespace ProjectsHub.API.Services
 {
     public class UserService
     {
-        public Boolean UserExist(string Email, string Passwrd, UserRepository Users)
+        public UserAccount GetLoggedInUser(string Email, string Password, UserRepository Users) 
         {
-            if (GetUser(Email, Passwrd, Users) == null)
-                return false;
-            return true;
+            var user = GetUserByEmail(Email, Users);
+            if (user.Password == Password)
+                return user;
+            throw new UserPasswordNotMatchedException();
         }
-        public UserAccount GetUser(string Email, string Passwrd, UserRepository Users)
+        private UserAccount GetUserByEmail(string Email, UserRepository Users)
         {
-            return (UserAccount)Users.GetUser(Email, Passwrd);
+            return (UserAccount)Users.GetUserByEmail(Email.ToLower());
         }
     }
 }
