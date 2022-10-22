@@ -8,10 +8,10 @@ namespace ProjectsHub.API.Services
 {
     public class UserService
     {
-        public UserAccount GetLoggedInUser(string Email, string Password, UserRepository Users) 
+        public UserAccount GetLoggedInUser(string Email, string Password, UserRepository Users)
         {
             var user = GetUserByEmail(Email, Users);
-            if (user.Password == Password)
+            if (ComputePasswordHash(Password).Equals(user.Password))
                 return user;
             throw new UserPasswordNotMatchedException();
         }
@@ -35,7 +35,7 @@ namespace ProjectsHub.API.Services
         {
             var sha256 = SHA256.Create();
             var byteValue = Encoding.UTF8.GetBytes(Password);
-            var byteHash = sha256.ComputeHash(byteValue); 
+            var byteHash = sha256.ComputeHash(byteValue);
             return Convert.ToBase64String(byteHash);
         }
     }
