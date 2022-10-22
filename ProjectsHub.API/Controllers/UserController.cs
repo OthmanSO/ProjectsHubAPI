@@ -24,7 +24,50 @@ namespace ProjectsHub.API.Controllers
             _UserRepository.CreateList();
             _Configuration = _conf ?? throw new ArgumentNullException(nameof(IConfiguration));
         }
-       
+
+        [HttpPost("signup")]
+        public async Task<ActionResult> SignUp([FromBody] UserAccountCreate user)
+        {
+            if (user == null
+                || string.IsNullOrEmpty(user.FirstName)
+                || string.IsNullOrEmpty(user.LastName)
+                || string.IsNullOrEmpty(user.Email)
+                || string.IsNullOrEmpty(user.Password))
+                return BadRequest("Required feild missing");
+            try
+            {
+                var userId = _UserService.CreateUser(user, _UserRepository);
+
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier , userId.ToString() ),
+                    new Claim(ClaimTypes.GivenName , $"{user.FirstName} {user.LastName}"),
+                    new Claim(ClaimTypes.Email, user.Email)
+                };
+
+                var tok = new JwtSecurityToken(
+                    issuer: _Configuration["Jwt:Issuer"],
+                    audience: _Configuration["Jwt: Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMinutes(60),
+                    notBefore: DateTime.UtcNow,
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
+                        SecurityAlgorithms.HmacSha256)
+                    );
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
+                return Created(userId.ToString(), tokenString);
+
+            }
+            catch (UserAlreadyExistException ex)
+            {
+                return Conflict("User Already Exists");
+            }
+
+            return NotFound();
+
+        }
+
         [HttpPost("/login")]
         public async Task<ActionResult> Login([FromBody] UserAuth user)
         {
@@ -56,7 +99,8 @@ namespace ProjectsHub.API.Controllers
             catch (NullReferenceException e)
             {
                 return NotFound("User Not Found");
-            }catch (UserPasswordNotMatchedException e)
+            }
+            catch (UserPasswordNotMatchedException e)
             {
                 return BadRequest("Password Mismatch");
             }

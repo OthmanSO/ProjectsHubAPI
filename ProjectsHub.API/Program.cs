@@ -32,7 +32,7 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserRepository>();
+builder.Services.AddSingleton<UserRepository>();
 
 var app = builder.Build();
 
