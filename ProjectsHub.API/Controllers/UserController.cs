@@ -68,7 +68,7 @@ namespace ProjectsHub.API.Controllers
 
         }
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] UserAuth user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
