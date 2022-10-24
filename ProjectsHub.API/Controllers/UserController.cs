@@ -11,7 +11,7 @@ using ProjectsHub.API.Exceptions;
 namespace ProjectsHub.API.Controllers
 {
     [ApiController]
-    [Route("/api/V1.0/usres")]
+    [Route("/api/V1.0/user")]
     public class UserController : ControllerBase
     {
         private readonly UserService _UserService;
