@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ProjectsHub.API.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -105,6 +106,25 @@ namespace ProjectsHub.API.Controllers
                 return BadRequest("Password Mismatch");
             }
 
+        }
+
+        [Authorize]
+        [HttpGet()]
+        public async Task<IActionResult> userProfile()
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                var userClaims = identity.Claims;
+                var userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                var userProfile = _UserService.GetUserProfileById(userId, _UserRepository);
+                if (userProfile == null)
+                    throw new ArgumentNullException(nameof(userProfile));
+                return Ok(userProfile);
+            }catch (Exception e)
+            {
+                return NotFound("Please Login First");
+            }
         }
     }
 }

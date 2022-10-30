@@ -38,5 +38,11 @@ namespace ProjectsHub.API.Services
             var byteHash = sha256.ComputeHash(byteValue);
             return Convert.ToBase64String(byteHash);
         }
+
+        internal UserAccountProfileDto GetUserProfileById(Guid? userId, UserRepository userRepository)
+        {
+            var user = userRepository.GetUserById(userId);
+            return user;
+        }
     }
 }
