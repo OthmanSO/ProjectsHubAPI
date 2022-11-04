@@ -108,23 +108,42 @@ namespace ProjectsHub.API.Controllers
 
         }
 
-        [Authorize]
-        [HttpGet()]
-        public async Task<IActionResult> userProfile()
+
+        //[HttpGet()]
+        [HttpGet("{id}")] 
+        public async Task<IActionResult> userProfile(string id)
         {
-            try
+            var userId = new Guid();
+
+            if (id == null)
             {
-                var identity = HttpContext.User.Identity as ClaimsIdentity;
-                var userClaims = identity.Claims;
-                var userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-                var userProfile = _UserService.GetUserProfileById(userId, _UserRepository);
-                if (userProfile == null)
-                    throw new ArgumentNullException(nameof(userProfile));
-                return Ok(userProfile);
-            }catch (Exception e)
-            {
-                return NotFound("Please Login First");
+                userId = getUserIdFromToken();
             }
+
+            else
+            {
+                userId = Guid.Parse(id);
+            }
+
+            if (userId == Guid.Empty)
+            {
+                return BadRequest("Log in or include user identifier first");
+            }
+
+            var userProfile = _UserService.GetUserProfileById(userId, _UserRepository);
+            
+            if (userProfile == null)
+                return NotFound("user Not Found");
+            return Ok(userProfile);
+        }
+
+        private Guid getUserIdFromToken()
+        {
+            Guid userId;
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var userClaims = identity.Claims;
+            userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            return userId;
         }
     }
 }

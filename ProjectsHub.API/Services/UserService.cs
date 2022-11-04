@@ -39,7 +39,7 @@ namespace ProjectsHub.API.Services
             return Convert.ToBase64String(byteHash);
         }
 
-        internal UserAccountProfileDto GetUserProfileById(Guid? userId, UserRepository userRepository)
+        internal UserAccountProfileDto GetUserProfileById(Guid userId, UserRepository userRepository)
         {
             var user = userRepository.GetUserById(userId);
             return user;
