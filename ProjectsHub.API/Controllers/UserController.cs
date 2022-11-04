@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ProjectsHub.API.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -105,6 +106,44 @@ namespace ProjectsHub.API.Controllers
                 return BadRequest("Password Mismatch");
             }
 
+        }
+
+
+        //[HttpGet()]
+        [HttpGet("{id}")] 
+        public async Task<IActionResult> userProfile(string id)
+        {
+            var userId = new Guid();
+
+            if (id == null)
+            {
+                userId = getUserIdFromToken();
+            }
+
+            else
+            {
+                userId = Guid.Parse(id);
+            }
+
+            if (userId == Guid.Empty)
+            {
+                return BadRequest("Log in or include user identifier first");
+            }
+
+            var userProfile = _UserService.GetUserProfileById(userId, _UserRepository);
+            
+            if (userProfile == null)
+                return NotFound("user Not Found");
+            return Ok(userProfile);
+        }
+
+        private Guid getUserIdFromToken()
+        {
+            Guid userId;
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var userClaims = identity.Claims;
+            userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            return userId;
         }
     }
 }
