@@ -107,7 +107,23 @@ namespace ProjectsHub.API.Controllers
             }
 
         }
-
+        
+        [HttpPut("/ProfilePicture/{id}")]
+        public async Task<IActionResult> ChangeProfilePic([FromBody] String EncodedProfilePic, String id)
+        {
+            if(EncodedProfilePic.IsNullOrEmpty() || id.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _UserService.ChangeProfilePic(Guid.Parse(id), EncodedProfilePic, _UserRepository);
+            }catch (Exception e)
+            {
+                return NotFound("User not found");
+            }
+            return Ok();
+        }
 
         //[HttpGet()]
         [HttpGet("{id}")] 

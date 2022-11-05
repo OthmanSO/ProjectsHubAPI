@@ -56,6 +56,14 @@ namespace ProjectsHub.Data
             });
         }
 
+        public void setProfilePic(Guid userId, string encodedProfilePic)
+        {
+            var userAccount = (from User in UsersList
+                               where User._Id == userId
+                               select User).First();
+            userAccount.ProfilePicture = encodedProfilePic;
+        }
+
         public UserAccount? GetUserByEmail(String Email)
         {
             return (from userAccount in UsersList
