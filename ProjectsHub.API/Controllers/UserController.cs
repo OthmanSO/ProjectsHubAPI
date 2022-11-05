@@ -108,7 +108,7 @@ namespace ProjectsHub.API.Controllers
 
         }
         
-        [HttpPut("/ProfilePicture/{id}")]
+        [HttpPut("ProfilePicture/{id}")]
         public async Task<IActionResult> ChangeProfilePic([FromBody] String EncodedProfilePic, String id)
         {
             if(EncodedProfilePic.IsNullOrEmpty() || id.IsNullOrEmpty())
