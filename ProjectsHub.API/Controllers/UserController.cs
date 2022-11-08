@@ -108,17 +108,36 @@ namespace ProjectsHub.API.Controllers
             }
 
         }
-        
+
         [HttpPut("ProfilePicture/{id}")]
-        public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic , string id) {
-            if(ProfilePic.EncodedProfilePicture.IsNullOrEmpty() || id.IsNullOrEmpty())
+        public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic, string id)
+        {
+            if (ProfilePic.EncodedProfilePicture.IsNullOrEmpty() || id.IsNullOrEmpty())
             {
                 return BadRequest();
             }
             try
             {
                 _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture, _UserRepository);
-            }catch (Exception e)
+            }
+            catch (Exception e)
+            {
+                return NotFound("User not found");
+            }
+            return Ok();
+        }
+        [HttpPut("Bio/{id}")]
+        public async Task<IActionResult> ChangeBio([FromBody] BioDto UserBio, string id)
+        {
+            if (UserBio.bio.IsNullOrEmpty() || id.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _UserService.ChangeUserBio(Guid.Parse(id), UserBio.bio, _UserRepository);
+            }
+            catch (Exception e)
             {
                 return NotFound("User not found");
             }
