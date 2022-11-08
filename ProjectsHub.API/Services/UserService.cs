@@ -49,5 +49,10 @@ namespace ProjectsHub.API.Services
         {
                 userRepository.setProfilePic(userId, encodedProfilePic);
         }
+
+        internal void ChangeUserBio(Guid userId, string bio, UserRepository userRepository)
+        {
+            userRepository.setUserBio(userId, bio);
+        }
     }
 }
