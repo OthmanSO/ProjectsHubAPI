@@ -54,5 +54,10 @@ namespace ProjectsHub.API.Services
         {
             userRepository.setUserBio(userId, bio);
         }
+
+        internal void ChangeUserName(Guid userId, UserNameDto newUserName, UserRepository userRepository)
+        {
+            userRepository.setUserName(userId, newUserName);
+        }
     }
 }
