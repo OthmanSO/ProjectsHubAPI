@@ -60,5 +60,10 @@ namespace ProjectsHub.API.Services
             userRepository.setUserName(userId, newUserName);
         }
 
+
+        internal void ChangeUserPassword(Guid guid, PasswordUpdateDto userPasswords, UserRepository userRepository)
+        {
+            GetUserByID();
+        }
     }
 }
