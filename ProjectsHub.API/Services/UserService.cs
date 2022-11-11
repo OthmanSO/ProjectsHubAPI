@@ -59,5 +59,6 @@ namespace ProjectsHub.API.Services
         {
             userRepository.setUserName(userId, newUserName);
         }
+
     }
 }
