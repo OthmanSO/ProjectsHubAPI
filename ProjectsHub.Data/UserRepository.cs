@@ -64,6 +64,15 @@ namespace ProjectsHub.Data
             userAccount.ProfilePicture = encodedProfilePic;
         }
 
+        public void setUserName(Guid userId, UserNameDto newUserName)
+        {
+            var userAccount = (from User in UsersList
+                               where User._Id == userId
+                               select User).First();
+            userAccount.FirstName = newUserName.FirstName;
+            userAccount.LastName = newUserName.LastName;
+        }
+
         public void setUserBio(Guid userId, String Bio)
         {
             var userAccount = (from User in UsersList
