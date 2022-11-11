@@ -144,6 +144,24 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
+        [HttpPut("username/{id}")]
+        public async Task<IActionResult> ChangeUsername([FromBody] UserNameDto UserName, string id)
+        {
+            if (UserName.FirstName.IsNullOrEmpty() || UserName.LastName.IsNullOrEmpty() || id.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _UserService.ChangeUserName(Guid.Parse(id), UserName, _UserRepository);
+            }
+            catch (Exception e)
+            {
+                return NotFound("User not found");
+            }
+            return Ok();
+        }
+
         //[HttpGet()]
         [HttpGet("{id}")] 
         public async Task<IActionResult> userProfile(string id)
