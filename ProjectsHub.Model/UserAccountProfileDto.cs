@@ -3,7 +3,8 @@
     public class UserAccountProfileDto
     {
         public Guid _Id { get; set; }
-        public String Name { get; set; }
+        public String FirstName { get; set; }
+        public String LastName { get; set; }
         public String ProfilePicture { get; set; }
         public String Bio { get; set; }
         public int Following { get; set; }
