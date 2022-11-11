@@ -44,5 +44,10 @@ namespace ProjectsHub.API.Services
             var user = userRepository.GetUserById(userId);
             return user;
         }
+
+        internal void ChangeProfilePic(Guid userId, string encodedProfilePic, UserRepository userRepository)
+        {
+                userRepository.setProfilePic(userId, encodedProfilePic);
+        }
     }
 }

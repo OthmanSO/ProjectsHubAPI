@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using ProjectsHub.API.Exceptions;
 using Microsoft.AspNetCore.Authorization;
+using ProjectsHub.API.Model;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -107,7 +108,22 @@ namespace ProjectsHub.API.Controllers
             }
 
         }
-
+        
+        [HttpPut("ProfilePicture/{id}")]
+        public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic , string id) {
+            if(ProfilePic.EncodedProfilePicture.IsNullOrEmpty() || id.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture, _UserRepository);
+            }catch (Exception e)
+            {
+                return NotFound("User not found");
+            }
+            return Ok();
+        }
 
         //[HttpGet()]
         [HttpGet("{id}")] 
