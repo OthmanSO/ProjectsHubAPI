@@ -64,6 +64,23 @@ namespace ProjectsHub.Data
             userAccount.ProfilePicture = encodedProfilePic;
         }
 
+        public void setUserName(Guid userId, UserNameDto newUserName)
+        {
+            var userAccount = (from User in UsersList
+                               where User._Id == userId
+                               select User).First();
+            userAccount.FirstName = newUserName.FirstName;
+            userAccount.LastName = newUserName.LastName;
+        }
+
+        public void setUserBio(Guid userId, String Bio)
+        {
+            var userAccount = (from User in UsersList
+                               where User._Id == userId
+                               select User).First();
+            userAccount.Bio = Bio;
+        }
+
         public UserAccount? GetUserByEmail(String Email)
         {
             return (from userAccount in UsersList
@@ -106,11 +123,12 @@ namespace ProjectsHub.Data
                 lastFiveProjects = (from post in user.Projects
                                     select post).Take(5).ToList();
             }
-              
+
             return new UserAccountProfileDto
             {
                 _Id = user._Id,
-                Name = $"{ user.FirstName} {user.LastName}",
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Bio = user.Bio,
                 ProfilePicture = user.ProfilePicture,
                 Following = user.Following != null ? user.Following.Count() : 0,
