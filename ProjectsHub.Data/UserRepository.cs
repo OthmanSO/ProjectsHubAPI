@@ -123,11 +123,12 @@ namespace ProjectsHub.Data
                 lastFiveProjects = (from post in user.Projects
                                     select post).Take(5).ToList();
             }
-              
+
             return new UserAccountProfileDto
             {
                 _Id = user._Id,
-                Name = $"{ user.FirstName} {user.LastName}",
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Bio = user.Bio,
                 ProfilePicture = user.ProfilePicture,
                 Following = user.Following != null ? user.Following.Count() : 0,
