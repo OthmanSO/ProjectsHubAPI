@@ -155,9 +155,13 @@ namespace ProjectsHub.API.Controllers
             {
                 _UserService.ChangeUserPassword(Guid.Parse(id), userPasswords, _UserRepository);
             }
-            catch (Exception e)
+            catch (UserPasswordNotMatchedException e)
             {
-                return NotFound("User not found");
+                return Unauthorized("Old Password Mismatch");
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("User Not Found");
             }
             return Ok();
         }
@@ -202,7 +206,7 @@ namespace ProjectsHub.API.Controllers
             }
 
             var userProfile = _UserService.GetUserProfileById(userId, _UserRepository);
-            
+
             if (userProfile == null)
                 return NotFound("user Not Found");
             return Ok(userProfile);

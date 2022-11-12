@@ -47,7 +47,7 @@ namespace ProjectsHub.API.Services
 
         internal void ChangeProfilePic(Guid userId, string encodedProfilePic, UserRepository userRepository)
         {
-                userRepository.setProfilePic(userId, encodedProfilePic);
+            userRepository.setProfilePic(userId, encodedProfilePic);
         }
 
         internal void ChangeUserBio(Guid userId, string bio, UserRepository userRepository)
@@ -61,9 +61,15 @@ namespace ProjectsHub.API.Services
         }
 
 
-        internal void ChangeUserPassword(Guid guid, PasswordUpdateDto userPasswords, UserRepository userRepository)
+        internal void ChangeUserPassword(Guid userId, PasswordUpdateDto userPasswords, UserRepository userRepository)
         {
-            GetUserByID();
+            UserAccount user = userRepository.GetUserAccountByID(userId);
+            if (user.Password.Equals(ComputePasswordHash(userPasswords.OldPassword)))
+            {
+                userRepository.SetUserPassword(userId, ComputePasswordHash(userPasswords.NewPassword));
+                return;
+            }
+            throw new UserPasswordNotMatchedException();
         }
     }
 }
