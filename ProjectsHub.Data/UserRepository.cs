@@ -73,6 +73,19 @@ namespace ProjectsHub.Data
             userAccount.LastName = newUserName.LastName;
         }
 
+        public void SetUserPassword(Guid userId, string password)
+        {
+            var userAccount = (from User in UsersList
+                               where User._Id == userId
+                               select User).First();
+            userAccount.Password = password;
+        }
+
+        public UserAccount GetUserAccountByID(Guid userId)
+        {
+            return UsersList.First(x => x._Id == userId);
+        }
+
         public void setUserBio(Guid userId, String Bio)
         {
             var userAccount = (from User in UsersList
