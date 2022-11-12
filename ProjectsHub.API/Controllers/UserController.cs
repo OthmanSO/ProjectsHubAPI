@@ -144,6 +144,28 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
+        [HttpPut("Password/{id}")]
+        public async Task<IActionResult> ChangePassword([FromBody] PasswordUpdateDto userPasswords, string id)
+        {
+            if (userPasswords.OldPassword.IsNullOrEmpty() || id.IsNullOrEmpty() || userPasswords.NewPassword.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _UserService.ChangeUserPassword(Guid.Parse(id), userPasswords, _UserRepository);
+            }
+            catch (UserPasswordNotMatchedException e)
+            {
+                return Unauthorized("Old Password Mismatch");
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("User Not Found");
+            }
+            return Ok();
+        }
+
         [HttpPut("username/{id}")]
         public async Task<IActionResult> ChangeUsername([FromBody] UserNameDto UserName, string id)
         {
@@ -163,7 +185,7 @@ namespace ProjectsHub.API.Controllers
         }
 
         //[HttpGet()]
-        [HttpGet("{id}")] 
+        [HttpGet("{id}")]
         public async Task<IActionResult> userProfile(string id)
         {
             var userId = new Guid();
@@ -184,7 +206,7 @@ namespace ProjectsHub.API.Controllers
             }
 
             var userProfile = _UserService.GetUserProfileById(userId, _UserRepository);
-            
+
             if (userProfile == null)
                 return NotFound("user Not Found");
             return Ok(userProfile);
