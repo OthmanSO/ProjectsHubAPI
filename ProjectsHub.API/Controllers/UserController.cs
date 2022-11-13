@@ -98,13 +98,13 @@ namespace ProjectsHub.API.Controllers
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
                 return Ok(tokenString);
             }
-            catch (NullReferenceException e)
-            {
-                return NotFound("User Not Found");
-            }
             catch (UserPasswordNotMatchedException e)
             {
                 return BadRequest("Password Mismatch");
+            }
+            catch (Exception e)
+            {
+                return NotFound("User Not Found");
             }
 
         }
