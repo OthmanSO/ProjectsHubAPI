@@ -13,5 +13,6 @@
         public IEnumerable<Guid> Posts { get; set; }
         public IEnumerable<Guid> Following { get; set; }
         public IEnumerable<Guid> Followers { get; set; }
+        public IEnumerable<Guid> Contacts { get; set; }
     }
 }

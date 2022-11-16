@@ -86,6 +86,18 @@ namespace ProjectsHub.Data
             return UsersList.First(x => x._Id == userId);
         }
 
+        public void AddContact(Guid userId, Guid contactId)
+        {
+            var user1 = (from User in UsersList
+                         where User._Id == userId
+                         select User).First();
+            var user2 = (from User in UsersList
+                         where user1._Id == contactId
+                         select User).First();
+            user1.Contacts.Append(contactId);
+            user2.Contacts.Append(userId);
+        }
+
         public void setUserBio(Guid userId, String Bio)
         {
             var userAccount = (from User in UsersList
@@ -109,14 +121,14 @@ namespace ProjectsHub.Data
             return _Id;
         }
 
-        public UserAccountProfileDto GetUserById(Guid userId)
+        public UserAccountProfileDto GetUserById (Guid userId) 
         {
             List<Guid> lastFivePosts = new List<Guid>();
             List<Guid> lastFiveProjects = new List<Guid>();
 
             var user = (from userAccount in UsersList
                         where userAccount._Id == userId
-                        select userAccount).FirstOrDefault();
+                        select userAccount).First();
 
             if (user == null)
             {

@@ -71,5 +71,10 @@ namespace ProjectsHub.API.Services
             }
             throw new UserPasswordNotMatchedException();
         }
+
+        internal void AddContact(Guid userId, Guid contactId, UserRepository userRepository)
+        {
+                userRepository.AddContact(userId, contactId);
+        }
     }
 }
