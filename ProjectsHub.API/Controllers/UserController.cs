@@ -203,6 +203,10 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User not found");
             }
+            catch (InvalidOperationException e)
+            {
+                return NotFound("user Not Found");
+            }
             return Ok();
         }
 
