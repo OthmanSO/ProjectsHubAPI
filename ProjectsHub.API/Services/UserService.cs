@@ -76,5 +76,10 @@ namespace ProjectsHub.API.Services
         {
                 userRepository.AddContact(userId, contactId);
         }
+
+        internal IEnumerable<Guid> GetUserContacts(Guid userId, UserRepository userRepository)
+        {
+            return userRepository.GetUserContacts(userId);
+        }
     }
 }
