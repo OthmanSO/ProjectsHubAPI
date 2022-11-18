@@ -288,7 +288,12 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var Contacts = _UserService.GetUserContacts(userId, _UserRepository);
-                return Ok(Contacts);
+                List<IdDto> ContactsList = new List<IdDto>();
+                foreach (var Contact in Contacts)
+                {
+                    ContactsList.Add(new IdDto { Id = Contact });
+                }
+                return Ok(ContactsList);
             }
             catch(ArgumentNullException e)
             {
