@@ -261,6 +261,32 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
+        [HttpGet("Contacts/{id}")]
+        public async Task<IActionResult> UserContacts(string id)
+        {
+            var userId = new Guid();
+
+            if (id == null)
+            {
+                userId = getUserIdFromToken();
+            }
+            else
+            {
+                userId = Guid.Parse(id);
+            }
+
+            if (userId == Guid.Empty)
+            {
+                return BadRequest("Log in or include user identifier first");
+            }
+
+            var userProfile = _UserService.GetUserContacts(userId, _UserRepository);
+
+            if (userProfile == null)
+                return NotFound("user Not Found");
+            return Ok(userProfile);
+        }
+
         //[HttpGet()]
 >>>>>>> f27bcb2 (Put Contact)
         [HttpGet("{id}")]

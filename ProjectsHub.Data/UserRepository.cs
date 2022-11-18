@@ -48,7 +48,6 @@ namespace ProjectsHub.Data
 
         public void AddContact(Guid userId, Guid contactId)
         {
-
             var user1 = GetUserAccountByID(userId); 
             var user2 = GetUserAccountByID(contactId);
 
