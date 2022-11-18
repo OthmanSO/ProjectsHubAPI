@@ -99,17 +99,26 @@ namespace ProjectsHub.Data
             var user1 = (from User in UsersList
                          where User._Id == userId
                          select User).First();
+
             var user2 = (from User in UsersList
                          where User._Id == contactId
                          select User).First();
+
             if (user1.Contacts == null)
                 user1.Contacts = new List<Guid>();
+
             if (user2.Contacts == null)
                 user2.Contacts = new List<Guid>();
+
             if (!user1.Contacts.Any(x => x.Equals(contactId)))
-                user1.Contacts.Append(contactId);
+            {
+                user1.Contacts.Add(contactId);
+            }
+
             if (!user2.Contacts.Any(x => x.Equals(userId)))
-                user2.Contacts.Append(userId);
+            {
+                user2.Contacts.Add(userId);
+            }
         }
 
         public void setUserBio(Guid userId, String Bio)
