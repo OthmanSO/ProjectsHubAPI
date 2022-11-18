@@ -100,7 +100,7 @@ namespace ProjectsHub.Data
                          where User._Id == userId
                          select User).First();
             var user2 = (from User in UsersList
-                         where user1._Id == contactId
+                         where User._Id == contactId
                          select User).First();
             if(user1.Contacts == null )
                 user1.Contacts = new List<Guid>();
