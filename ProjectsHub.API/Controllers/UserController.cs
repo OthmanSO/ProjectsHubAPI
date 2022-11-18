@@ -224,12 +224,16 @@ namespace ProjectsHub.API.Controllers
             {
                 return BadRequest("Log in or include user identifier first");
             }
-
-            var userProfile = _UserService.GetUserContacts(userId, _UserRepository);
-
-            if (userProfile == null)
+            try
+            {
+                var Contacts = _UserService.GetUserContacts(userId, _UserRepository);
+                return Ok(Contacts);
+            }
+            catch(ArgumentNullException e)
+            {
                 return NotFound("user Not Found");
-            return Ok(userProfile);
+            }
+            
         }
 
         //[HttpGet()]
