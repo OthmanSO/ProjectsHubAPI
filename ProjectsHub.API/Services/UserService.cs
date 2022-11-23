@@ -81,5 +81,10 @@ namespace ProjectsHub.API.Services
         {
             return userRepository.GetUserContacts(userId);
         }
+
+        internal void DeleteContact(Guid userId, Guid ContactId, UserRepository userRepository)
+        {
+            userRepository.DeleteContact(userId, ContactId);
+        }
     }
 }

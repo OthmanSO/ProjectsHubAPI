@@ -94,6 +94,14 @@ namespace ProjectsHub.Data
             return user.Contacts != null ? user.Contacts : new List<Guid>();
         }
 
+        public void DeleteContact(Guid userId, Guid contactId)
+        {
+            var usr = (from User in UsersList
+                       where User._Id == userId
+                       select User).First();
+            usr.Contacts.Remove(contactId); 
+        }
+
         public void AddContact(Guid userId, Guid contactId)
         {
             var user1 = (from User in UsersList
