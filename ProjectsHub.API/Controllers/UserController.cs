@@ -298,6 +298,30 @@ namespace ProjectsHub.API.Controllers
             return Ok(userProfile);
         }
 
+        [HttpGet("shortProfile/{id}")]
+        public async Task<IActionResult> UserShortProfile(string id)
+        {
+            var userId = new Guid();
+
+            try
+            {
+                var userShortProfile = await _UserService.GetUserShortPeofile(Guid.Parse(id), _UserRepository);
+                return Ok(userShortProfile);
+            }
+            catch (FormatException e)
+            {
+                return BadRequest("Wrong userId");
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("user Not Found");
+            }
+            catch (InvalidOperationException e)
+            {
+                return NotFound("user Not Found");
+            }
+        }
+
         private Guid getUserIdFromToken()
         {
             Guid userId;
