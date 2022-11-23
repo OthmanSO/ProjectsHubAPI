@@ -195,7 +195,7 @@ namespace ProjectsHub.API.Controllers
             {
                 _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
             }
-            catch(FormatException e)
+            catch (FormatException e)
             {
                 return BadRequest();
             }
@@ -260,7 +260,7 @@ namespace ProjectsHub.API.Controllers
                 }
                 return Ok(ContactsList);
             }
-            catch(ArgumentNullException e)
+            catch (ArgumentNullException e)
             {
                 return NotFound("user Not Found");
             }

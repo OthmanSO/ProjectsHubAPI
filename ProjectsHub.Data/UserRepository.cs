@@ -99,7 +99,7 @@ namespace ProjectsHub.Data
             var usr = (from User in UsersList
                        where User._Id == userId
                        select User).First();
-            usr.Contacts.Remove(contactId); 
+            usr.Contacts.Remove(contactId);
         }
 
         public void AddContact(Guid userId, Guid contactId)
@@ -152,7 +152,7 @@ namespace ProjectsHub.Data
             return _Id;
         }
 
-        public UserAccountProfileDto GetUserById (Guid userId) 
+        public UserAccountProfileDto GetUserById(Guid userId)
         {
             List<Guid> lastFivePosts = new List<Guid>();
             List<Guid> lastFiveProjects = new List<Guid>();

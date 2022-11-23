@@ -74,7 +74,7 @@ namespace ProjectsHub.API.Services
 
         internal void AddContact(Guid userId, Guid contactId, UserRepository userRepository)
         {
-                userRepository.AddContact(userId, contactId);
+            userRepository.AddContact(userId, contactId);
         }
 
         internal IEnumerable<Guid> GetUserContacts(Guid userId, UserRepository userRepository)
