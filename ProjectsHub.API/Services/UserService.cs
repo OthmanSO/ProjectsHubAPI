@@ -90,7 +90,7 @@ namespace ProjectsHub.API.Services
         internal UserShortProfileDto GetUserShortPeofile(Guid userId, UserRepository userRepository)
         {
             var user = userRepository.GetUserById(userId);
-            var userShortProfile = new UserShortProfileDto { _id = user._Id, UserName = $"{user.FirstName} {user.LastName}", ChangeProfilePic = user.ProfilePicture };
+            var userShortProfile = new UserShortProfileDto { _id = user._Id, FirstName = user.FirstName, LastName = user.LastName, ProfilePic = user.ProfilePicture };
             return userShortProfile;
         }
     }

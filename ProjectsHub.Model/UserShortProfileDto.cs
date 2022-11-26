@@ -4,7 +4,8 @@ namespace ProjectsHub.Model
     public class UserShortProfileDto
     {
         public Guid _id { get; set; }
-        public string UserName { get; set; }
-        public string ChangeProfilePic { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string ProfilePic { get; set; }
     }
 }
