@@ -184,6 +184,92 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
+        [HttpPut("Contacts/{id}")]
+        public async Task<IActionResult> AddContacts([FromBody] ContactDto Contact, string id)
+        {
+            if (Contact.ContactId.IsNullOrEmpty() || id.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
+            }
+            catch (FormatException e)
+            {
+                return BadRequest();
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("User not found");
+            }
+            catch (InvalidOperationException e)
+            {
+                return NotFound("user Not Found");
+            }
+            return Ok();
+        }
+
+        [HttpDelete("Contacts/{id}")]
+        public async Task<IActionResult> DeleteContacts([FromBody] ContactDto Contact, string id)
+        {
+            if (Contact.ContactId.IsNullOrEmpty() || id.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
+            }
+            catch (FormatException e)
+            {
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return Ok();
+            }
+            return Ok();
+        }
+
+        [HttpGet("Contacts/{id}")]
+        public async Task<IActionResult> UserContacts(string id)
+        {
+            var userId = new Guid();
+
+            if (id == null)
+            {
+                userId = getUserIdFromToken();
+            }
+            else
+            {
+                userId = Guid.Parse(id);
+            }
+
+            if (userId == Guid.Empty)
+            {
+                return BadRequest("Log in or include user identifier first");
+            }
+            try
+            {
+                var Contacts = _UserService.GetUserContacts(userId, _UserRepository);
+                List<IdDto> ContactsList = new List<IdDto>();
+                foreach (var Contact in Contacts)
+                {
+                    ContactsList.Add(new IdDto { Id = Contact });
+                }
+                return Ok(ContactsList);
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("user Not Found");
+            }
+            catch (InvalidOperationException e)
+            {
+                return NotFound("user Not Found");
+            }
+        }
+
         //[HttpGet()]
         [HttpGet("{id}")]
         public async Task<IActionResult> userProfile(string id)
@@ -210,6 +296,30 @@ namespace ProjectsHub.API.Controllers
             if (userProfile == null)
                 return NotFound("user Not Found");
             return Ok(userProfile);
+        }
+
+        [HttpGet("shortProfile/{id}")]
+        public async Task<IActionResult> UserShortProfile(string id)
+        {
+            var userId = new Guid();
+
+            try
+            {
+                var userShortProfile =  _UserService.GetUserShortPeofile(Guid.Parse(id), _UserRepository);
+                return Ok(userShortProfile);
+            }
+            catch (FormatException e)
+            {
+                return BadRequest("Wrong userId");
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("user Not Found");
+            }
+            catch (InvalidOperationException e)
+            {
+                return NotFound("user Not Found");
+            }
         }
 
         private Guid getUserIdFromToken()

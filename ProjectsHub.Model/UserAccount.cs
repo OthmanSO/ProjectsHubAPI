@@ -9,9 +9,10 @@
         public String Password { get; set; }
         public String Bio { get; set; }
         public String ProfilePicture { get; set; }
-        public IEnumerable<Guid> Projects { get; set; }
-        public IEnumerable<Guid> Posts { get; set; }
-        public IEnumerable<Guid> Following { get; set; }
-        public IEnumerable<Guid> Followers { get; set; }
+        public List<Guid>? Projects { get; set; }
+        public List<Guid>? Posts { get; set; }
+        public List<Guid>? Following { get; set; }
+        public List<Guid>? Followers { get; set; }
+        public List<Guid>? Contacts { get; set; }
     }
 }
