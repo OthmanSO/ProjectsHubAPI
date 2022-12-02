@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.API.Services;
-using ProjectsHub.Data;
 using ProjectsHub.Model;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using ProjectsHub.API.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using ProjectsHub.API.Model;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using ProjectsHub.Core;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -18,11 +14,12 @@ namespace ProjectsHub.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _UserService;
-        IConfiguration _Configuration;
-        public UserController(UserService userService, IConfiguration _conf)
+        private readonly IUserToken _userToken;
+
+        public UserController(UserService userService, IUserToken usrToken)
         {
             _UserService = userService ?? throw new ArgumentNullException(nameof(UserService));
-            _Configuration = _conf ?? throw new ArgumentNullException(nameof(IConfiguration));
+            _userToken = usrToken ?? throw new ArgumentNullException(nameof(usrToken));
         }
 
         [HttpPost("signup")]
@@ -37,25 +34,8 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var userId = _UserService.CreateUser(user);
-
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier , userId.ToString() ),
-                    new Claim(ClaimTypes.GivenName , $"{user.FirstName} {user.LastName}"),
-                    new Claim(ClaimTypes.Email, user.Email)
-                };
-
-                var tok = new JwtSecurityToken(
-                    issuer: _Configuration["Jwt:Issuer"],
-                    audience: _Configuration["Jwt: Audience"],
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(60),
-                    notBefore: DateTime.UtcNow,
-                    signingCredentials: new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
-                        SecurityAlgorithms.HmacSha256)
-                    );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
+                var userName = $"{user.FirstName} {user.LastName}";
+                var tokenString = _userToken.CreateUserToken(userId , userName, user.Email );
                 return Created(userId.ToString(), tokenString);
 
             }
@@ -76,24 +56,8 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var loggedInUser = _UserService.GetLoggedInUser(user.Email, user.Password);
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier , loggedInUser._Id.ToString() ),
-                    new Claim(ClaimTypes.GivenName , $"{loggedInUser.FirstName} {loggedInUser.LastName}"),
-                    new Claim(ClaimTypes.Email, loggedInUser.Email)
-                };
-
-                var tok = new JwtSecurityToken(
-                    issuer: _Configuration["Jwt:Issuer"],
-                    audience: _Configuration["Jwt: Audience"],
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(60),
-                    notBefore: DateTime.UtcNow,
-                    signingCredentials: new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
-                        SecurityAlgorithms.HmacSha256)
-                    );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
+                var userName = $"{loggedInUser.FirstName} {loggedInUser.LastName}";
+                var tokenString = _userToken.CreateUserToken(loggedInUser._Id, userName, loggedInUser.Email);
                 return Ok(tokenString);
             }
             catch (UserPasswordNotMatchedException e)
@@ -108,33 +72,19 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
-        [HttpPut("ProfilePicture/{id}")]
-        public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic, string id)
+        [HttpPut("profilePicture")]
+        public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic)
         {
-            if (ProfilePic.EncodedProfilePicture.IsNullOrEmpty() || id.IsNullOrEmpty())
+            if (ProfilePic.EncodedProfilePicture.IsNullOrEmpty())
             {
                 return BadRequest();
             }
+
+            var id = _userToken.GetUserIdFromToken();
+
             try
             {
-                _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture);
-            }
-            catch (Exception e)
-            {
-                return NotFound("User not found");
-            }
-            return Ok();
-        }
-        [HttpPut("Bio/{id}")]
-        public async Task<IActionResult> ChangeBio([FromBody] BioDto UserBio, string id)
-        {
-            if (UserBio.bio.IsNullOrEmpty() || id.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
-            try
-            {
-                _UserService.ChangeUserBio(Guid.Parse(id), UserBio.bio);
+                _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
             }
             catch (Exception e)
             {
@@ -143,16 +93,42 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
-        [HttpPut("Password/{id}")]
-        public async Task<IActionResult> ChangePassword([FromBody] PasswordUpdateDto userPasswords, string id)
+        [Authorize]
+        [HttpPut("bio")]
+        public async Task<IActionResult> ChangeBio([FromBody] BioDto UserBio)
         {
-            if (userPasswords.OldPassword.IsNullOrEmpty() || id.IsNullOrEmpty() || userPasswords.NewPassword.IsNullOrEmpty())
+            if (UserBio.bio.IsNullOrEmpty())
             {
                 return BadRequest();
             }
+
+            var id = _userToken.GetUserIdFromToken();
+
             try
             {
-                _UserService.ChangeUserPassword(Guid.Parse(id), userPasswords);
+                _UserService.ChangeUserBio(id, UserBio.bio);
+            }
+            catch (Exception e)
+            {
+                return NotFound("User not found");
+            }
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPut("Password")]
+        public async Task<IActionResult> ChangePassword([FromBody] PasswordUpdateDto userPasswords)
+        {
+            if (userPasswords.OldPassword.IsNullOrEmpty() || userPasswords.NewPassword.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+
+            var id = _userToken.GetUserIdFromToken();
+
+            try
+            {
+                _UserService.ChangeUserPassword(id, userPasswords);
             }
             catch (UserPasswordNotMatchedException e)
             {
@@ -165,16 +141,18 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
-        [HttpPut("username/{id}")]
-        public async Task<IActionResult> ChangeUsername([FromBody] UserNameDto UserName, string id)
+        [Authorize]
+        [HttpPut("username")]
+        public async Task<IActionResult> ChangeUsername([FromBody] UserNameDto UserName)
         {
-            if (UserName.FirstName.IsNullOrEmpty() || UserName.LastName.IsNullOrEmpty() || id.IsNullOrEmpty())
+            if (UserName.FirstName.IsNullOrEmpty() || UserName.LastName.IsNullOrEmpty() )
             {
                 return BadRequest();
             }
+            var id = _userToken.GetUserIdFromToken();
             try
             {
-                _UserService.ChangeUserName(Guid.Parse(id), UserName);
+                _UserService.ChangeUserName(id, UserName);
             }
             catch (Exception e)
             {
@@ -183,16 +161,18 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
-        [HttpPut("Contacts/{id}")]
-        public async Task<IActionResult> AddContacts([FromBody] ContactDto Contact, string id)
+        [Authorize]
+        [HttpPut("Contacts")]
+        public async Task<IActionResult> AddContacts([FromBody] ContactDto Contact)
         {
-            if (Contact.ContactId.IsNullOrEmpty() || id.IsNullOrEmpty())
+            if (Contact.ContactId.IsNullOrEmpty())
             {
                 return BadRequest();
             }
+            var id = _userToken.GetUserIdFromToken();
             try
             {
-                _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
+                _UserService.AddContact(id, Guid.Parse(Contact.ContactId));
             }
             catch (FormatException e)
             {
@@ -209,16 +189,18 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("Contacts/{id}")]
-        public async Task<IActionResult> DeleteContacts([FromBody] ContactDto Contact, string id)
+        [Authorize]
+        [HttpDelete("Contacts")]
+        public async Task<IActionResult> DeleteContacts([FromBody] ContactDto Contact)
         {
-            if (Contact.ContactId.IsNullOrEmpty() || id.IsNullOrEmpty())
+            if (Contact.ContactId.IsNullOrEmpty())
             {
                 return BadRequest();
             }
+            var id = _userToken.GetUserIdFromToken();
             try
             {
-                _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
+                _UserService.DeleteContact(id, Guid.Parse(Contact.ContactId));
             }
             catch (FormatException e)
             {
@@ -231,27 +213,15 @@ namespace ProjectsHub.API.Controllers
             return Ok();
         }
 
-        [HttpGet("Contacts/{id}")]
-        public async Task<IActionResult> UserContacts(string id)
+        [Authorize]
+        [HttpGet("Contacts")]
+        public async Task<IActionResult> UserContacts()
         {
-            var userId = new Guid();
+            var id = _userToken.GetUserIdFromToken();
 
-            if (id == null)
-            {
-                userId = getUserIdFromToken();
-            }
-            else
-            {
-                userId = Guid.Parse(id);
-            }
-
-            if (userId == Guid.Empty)
-            {
-                return BadRequest("Log in or include user identifier first");
-            }
             try
             {
-                var Contacts = _UserService.GetUserContacts(userId);
+                var Contacts = _UserService.GetUserContacts(id);
                 List<IdDto> ContactsList = new List<IdDto>();
                 foreach (var Contact in Contacts)
                 {
@@ -268,18 +238,17 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
-
-        //[HttpGet()]
+        [Authorize]
+        [HttpGet()]
         [HttpGet("{id}")]
-        public async Task<IActionResult> userProfile(string id)
+        public async Task<IActionResult> userProfile(string? id)
         {
             var userId = new Guid();
 
             if (id == null)
             {
-                userId = getUserIdFromToken();
+                userId = _userToken.GetUserIdFromToken();
             }
-
             else
             {
                 userId = Guid.Parse(id);
@@ -296,7 +265,7 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             return Ok(userProfile);
         }
-
+        
         [HttpGet("shortProfile/{id}")]
         public async Task<IActionResult> UserShortProfile(string id)
         {
@@ -319,19 +288,6 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-        }
-
-        private Guid getUserIdFromToken()
-        {
-            Guid userId;
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity == null)
-            {
-                var userClaims = identity.Claims;
-                userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-                return userId;
-            }
-            throw new UserNotLoggedInException();
         }
     }
 }
