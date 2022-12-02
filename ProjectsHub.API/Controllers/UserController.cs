@@ -9,6 +9,7 @@ using System.Text;
 using ProjectsHub.API.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using ProjectsHub.API.Model;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -106,6 +107,7 @@ namespace ProjectsHub.API.Controllers
 
         }
 
+        [Authorize]
         [HttpPut("ProfilePicture/{id}")]
         public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic, string id)
         {
@@ -323,9 +325,13 @@ namespace ProjectsHub.API.Controllers
         {
             Guid userId;
             var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userClaims = identity.Claims;
-            userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            return userId;
+            if (identity == null)
+            {
+                var userClaims = identity.Claims;
+                userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                return userId;
+            }
+            throw new UserNotLoggedInException();
         }
     }
 }
