@@ -83,7 +83,7 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture);
+                _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
                 return Ok();
             }
             catch (Exception e)
