@@ -8,27 +8,32 @@ namespace ProjectsHub.API.Services
 {
     public class UserService
     {
-        public UserAccount GetLoggedInUser(string Email, string Password, UserRepository Users)
+        private readonly UserRepository _userRepository;
+        public UserService(UserRepository usrRepo)
         {
-            var user = GetUserByEmail(Email, Users);
+            this._userRepository = usrRepo ?? throw new ArgumentNullException(nameof(UserRepository));
+        }
+        public UserAccount GetLoggedInUser(string Email, string Password)
+        {
+            var user = GetUserByEmail(Email);
             if (ComputePasswordHash(Password).Equals(user.Password))
                 return user;
             throw new UserPasswordNotMatchedException();
         }
-        private UserAccount GetUserByEmail(string Email, UserRepository Users)
+        private UserAccount GetUserByEmail(string Email)
         {
-            return (UserAccount)Users.GetUserByEmail(Email.ToLower());
+            return (UserAccount)_userRepository.GetUserByEmail(Email.ToLower());
         }
 
-        public Guid CreateUser(UserAccountCreate user, UserRepository userRepository)
+        public Guid CreateUser(UserAccountCreate user)
         {
-            var userAlreadyExist = GetUserByEmail(user.Email, userRepository);
+            var userAlreadyExist = GetUserByEmail(user.Email);
             if (userAlreadyExist != null)
             {
                 throw new UserAlreadyExistException();
             }
             user.Password = ComputePasswordHash(user.Password);
-            var userCreatedId = userRepository.CreateUser(user);
+            var userCreatedId = _userRepository.CreateUser(user);
             return userCreatedId;
         }
         private static String ComputePasswordHash(String Password)
@@ -39,58 +44,57 @@ namespace ProjectsHub.API.Services
             return Convert.ToBase64String(byteHash);
         }
 
-        internal UserAccountProfileDto GetUserProfileById(Guid userId, UserRepository userRepository)
+        internal UserAccountProfileDto GetUserProfileById(Guid userId)
         {
-            var user = userRepository.GetUserById(userId);
+            var user = _userRepository.GetUserById(userId);
             return user;
         }
 
-        internal void ChangeProfilePic(Guid userId, string encodedProfilePic, UserRepository userRepository)
+        internal void ChangeProfilePic(Guid userId, string encodedProfilePic)
         {
-            userRepository.setProfilePic(userId, encodedProfilePic);
+            _userRepository.setProfilePic(userId, encodedProfilePic);
         }
 
-        internal void ChangeUserBio(Guid userId, string bio, UserRepository userRepository)
+        internal void ChangeUserBio(Guid userId, string bio)
         {
-            userRepository.setUserBio(userId, bio);
+            _userRepository.setUserBio(userId, bio);
         }
 
-        internal void ChangeUserName(Guid userId, UserNameDto newUserName, UserRepository userRepository)
+        internal void ChangeUserName(Guid userId, UserNameDto newUserName)
         {
-            userRepository.setUserName(userId, newUserName);
+            _userRepository.setUserName(userId, newUserName);
         }
 
 
-        internal void ChangeUserPassword(Guid userId, PasswordUpdateDto userPasswords, UserRepository userRepository)
+        internal void ChangeUserPassword(Guid userId, PasswordUpdateDto userPasswords)
         {
-            UserAccount user = userRepository.GetUserAccountByID(userId);
+            UserAccount user = _userRepository.GetUserAccountByID(userId);
             if (user.Password.Equals(ComputePasswordHash(userPasswords.OldPassword)))
             {
-                userRepository.SetUserPassword(userId, ComputePasswordHash(userPasswords.NewPassword));
+                _userRepository.SetUserPassword(userId, ComputePasswordHash(userPasswords.NewPassword));
                 return;
             }
             throw new UserPasswordNotMatchedException();
         }
 
-        internal void AddContact(Guid userId, Guid contactId, UserRepository userRepository)
+        internal void AddContact(Guid userId, Guid contactId)
         {
-            userRepository.AddContact(userId, contactId);
+            _userRepository.AddContact(userId, contactId);
         }
 
-        internal IEnumerable<Guid> GetUserContacts(Guid userId, UserRepository userRepository)
+        internal IEnumerable<Guid> GetUserContacts(Guid userId)
         {
-            return userRepository.GetUserContacts(userId);
+            return _userRepository.GetUserContacts(userId);
         }
 
-        internal void DeleteContact(Guid userId, Guid ContactId, UserRepository userRepository)
+        internal void DeleteContact(Guid userId, Guid ContactId)
         {
-            userRepository.DeleteContact(userId, ContactId);
+            _userRepository.DeleteContact(userId, ContactId);
         }
 
-        internal UserShortProfileDto GetUserShortPeofile(Guid userId, UserRepository userRepository)
+        internal UserShortProfileDto GetUserShortPeofile(Guid userId)
         {
-            var user = userRepository.GetUserById(userId);
-
+            var user = _userRepository.GetUserById(userId);
             var userShortProfile = new UserShortProfileDto { _id = user._Id, FirstName = user.FirstName, LastName = user.LastName, ProfilePic = user.ProfilePicture };
             return userShortProfile;
         }

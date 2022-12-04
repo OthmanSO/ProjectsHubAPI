@@ -10,52 +10,6 @@ namespace ProjectsHub.Data
     {
         private List<UserAccount> UsersList = new List<UserAccount>();
 
-        public void CreateList()
-        {
-            UsersList.Add(new UserAccount
-            {
-                _Id = Guid.NewGuid(),
-                FirstName = "Othman",
-                LastName = "Othman",
-                Email = "othman@gmail.com",
-                Password = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-                ProfilePicture = "",
-                Posts = new List<Guid>(),
-                Projects = new List<Guid>(),
-                Bio = "",
-                Followers = new List<Guid>(),
-                Following = new List<Guid>()
-            });
-            UsersList.Add(new UserAccount
-            {
-                _Id = Guid.NewGuid(),
-                FirstName = "Noor",
-                LastName = "Braik",
-                Email = "noor@gmail.com",
-                Password = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-                ProfilePicture = "",
-                Posts = new List<Guid>(),
-                Projects = new List<Guid>(),
-                Bio = "",
-                Followers = new List<Guid>(),
-                Following = new List<Guid>()
-            });
-            UsersList.Add(new UserAccount
-            {
-                _Id = Guid.NewGuid(),
-                FirstName = "Tariq",
-                LastName = "Sabri",
-                Email = "tariq@gmail.com",
-                Password = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-                ProfilePicture = "",
-                Posts = new List<Guid>(),
-                Projects = new List<Guid>(),
-                Bio = "",
-                Followers = new List<Guid>(),
-                Following = new List<Guid>()
-            });
-        }
-
         public void setProfilePic(Guid userId, string encodedProfilePic)
         {
             var userAccount = GetUserAccountByID(userId);   

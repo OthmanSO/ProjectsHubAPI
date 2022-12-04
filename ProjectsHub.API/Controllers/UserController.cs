@@ -17,13 +17,10 @@ namespace ProjectsHub.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _UserService;
-        private readonly UserRepository _UserRepository;
         IConfiguration _Configuration;
-        public UserController(UserService userService, UserRepository userRepository, IConfiguration _conf)
+        public UserController(UserService userService, IConfiguration _conf)
         {
             _UserService = userService ?? throw new ArgumentNullException(nameof(UserService));
-            _UserRepository = userRepository ?? throw new ArgumentNullException(nameof(UserRepository));
-            _UserRepository.CreateList();
             _Configuration = _conf ?? throw new ArgumentNullException(nameof(IConfiguration));
         }
 
@@ -38,7 +35,7 @@ namespace ProjectsHub.API.Controllers
                 return BadRequest("Required feild missing");
             try
             {
-                var userId = _UserService.CreateUser(user, _UserRepository);
+                var userId = _UserService.CreateUser(user);
 
                 var claims = new[]
                 {
@@ -77,7 +74,7 @@ namespace ProjectsHub.API.Controllers
                 return BadRequest("Missing Email or Password");
             try
             {
-                var loggedInUser = _UserService.GetLoggedInUser(user.Email, user.Password, _UserRepository);
+                var loggedInUser = _UserService.GetLoggedInUser(user.Email, user.Password);
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier , loggedInUser._Id.ToString() ),
@@ -117,8 +114,12 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
+<<<<<<< HEAD
                 _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture, _UserRepository);
                 return Ok();
+=======
+                _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
@@ -134,8 +135,12 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
+<<<<<<< HEAD
                 _UserService.ChangeUserBio(Guid.Parse(id), UserBio.bio, _UserRepository);
                 return Ok();
+=======
+                _UserService.ChangeUserBio(Guid.Parse(id), UserBio.bio);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
@@ -152,8 +157,12 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
+<<<<<<< HEAD
                 _UserService.ChangeUserPassword(Guid.Parse(id), userPasswords, _UserRepository);
                 return Ok();
+=======
+                _UserService.ChangeUserPassword(Guid.Parse(id), userPasswords);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (UserPasswordNotMatchedException e)
             {
@@ -174,8 +183,12 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
+<<<<<<< HEAD
                 _UserService.ChangeUserName(Guid.Parse(id), UserName, _UserRepository);
                 return Ok();
+=======
+                _UserService.ChangeUserName(Guid.Parse(id), UserName);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
@@ -192,8 +205,12 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
+<<<<<<< HEAD
                 _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
                 return Ok();
+=======
+                _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (FormatException e)
             {
@@ -218,8 +235,12 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
+<<<<<<< HEAD
                 _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
                 return Ok();
+=======
+                _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (FormatException e)
             {
@@ -253,7 +274,7 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
-                var Contacts = _UserService.GetUserContacts(userId, _UserRepository);
+                var Contacts = _UserService.GetUserContacts(userId);
                 List<IdDto> ContactsList = new List<IdDto>();
                 foreach (var Contact in Contacts)
                 {
@@ -292,7 +313,7 @@ namespace ProjectsHub.API.Controllers
                 return BadRequest("Log in or include user identifier first");
             }
 
-            var userProfile = _UserService.GetUserProfileById(userId, _UserRepository);
+            var userProfile = _UserService.GetUserProfileById(userId);
 
             if (userProfile == null)
                 return NotFound("user Not Found");
@@ -306,7 +327,7 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                var userShortProfile =  _UserService.GetUserShortPeofile(Guid.Parse(id), _UserRepository);
+                var userShortProfile = _UserService.GetUserShortPeofile(Guid.Parse(id));
                 return Ok(userShortProfile);
             }
             catch (FormatException e)
