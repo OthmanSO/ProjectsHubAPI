@@ -219,6 +219,7 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
+                return Ok();
             }
             catch (FormatException e)
             {
@@ -228,7 +229,6 @@ namespace ProjectsHub.API.Controllers
             {
                 return Ok();
             }
-            return Ok();
         }
 
         [HttpGet("Contacts/{id}")]
