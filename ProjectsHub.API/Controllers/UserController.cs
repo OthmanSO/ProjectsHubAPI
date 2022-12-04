@@ -231,27 +231,7 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-        [HttpDelete("Contacts/{id}")]
-        public async Task<IActionResult> DeleteContacts([FromBody] ContactDto Contact, string id)
-        {
-            if (Contact.ContactId.IsNullOrEmpty() || id.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
-            try
-            {
-                _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
-            }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            catch (Exception e)
-            {
-                return Ok();
-            }
-            return Ok();
-        }
+       
 
         [HttpGet("Contacts/{id}")]
         public async Task<IActionResult> UserContacts(string id)
@@ -290,7 +270,6 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
-
 
         
         [HttpGet("{id}")]
