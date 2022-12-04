@@ -78,7 +78,7 @@ namespace ProjectsHub.Data
         {
             return (from userAccount in UsersList
                     where userAccount.Email == Email
-                    select userAccount).First();
+                    select userAccount).FirstOrDefault();
         }
 
         public Guid CreateUser(UserAccountCreate user)
