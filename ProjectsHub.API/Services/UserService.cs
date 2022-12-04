@@ -86,24 +86,13 @@ namespace ProjectsHub.API.Services
         {
             userRepository.DeleteContact(userId, ContactId);
         }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 369edee (Get UserShortProfile)
 
         internal UserShortProfileDto GetUserShortPeofile(Guid userId, UserRepository userRepository)
         {
             var user = userRepository.GetUserById(userId);
-<<<<<<< HEAD
+
             var userShortProfile = new UserShortProfileDto { _id = user._Id, FirstName = user.FirstName, LastName = user.LastName, ProfilePic = user.ProfilePicture };
             return userShortProfile;
         }
-=======
->>>>>>> 2f10f90 (Delete user contact)
-=======
-            var userShortProfile = new UserShortProfileDto { _id = user._Id, UserName = $"{user.FirstName} {user.LastName}", ChangeProfilePic = user.ProfilePicture };
-            return userShortProfile;
-        }
->>>>>>> 369edee (Get UserShortProfile)
     }
 }
