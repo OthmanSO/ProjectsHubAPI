@@ -121,5 +121,10 @@ namespace ProjectsHub.API.Services
         {
             return _userRepository.GetGetListOfFollwers(userId);
         }
+
+        internal object GetListOfFollwing(Guid userId)
+        {
+            return _userRepository.GetGetListOfFollwing(userId);
+        }
     }
 }
