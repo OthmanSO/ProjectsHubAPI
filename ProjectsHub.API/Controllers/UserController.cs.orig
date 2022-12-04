@@ -83,7 +83,8 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
+<<<<<<< HEAD
+                _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture);
                 return Ok();
             }
             catch (Exception e)
@@ -107,6 +108,42 @@ namespace ProjectsHub.API.Controllers
             {
                 _UserService.ChangeUserBio(id, UserBio.bio); 
                 return Ok();
+=======
+                _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
+            }
+            catch (Exception e)
+            {
+                return NotFound("User not found");
+            }
+            return Ok();
+        }
+
+        [Authorize]
+<<<<<<< HEAD
+        [HttpPut("Password")]
+        public async Task<IActionResult> ChangePassword([FromBody] PasswordUpdateDto userPasswords)
+        {
+            if (userPasswords.OldPassword.IsNullOrEmpty() || userPasswords.NewPassword.IsNullOrEmpty())
+=======
+        [HttpPut("bio")]
+        public async Task<IActionResult> ChangeBio([FromBody] BioDto UserBio)
+        {
+            if (UserBio.bio.IsNullOrEmpty())
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
+            {
+                return BadRequest();
+            }
+
+            var id = _userToken.GetUserIdFromToken();
+
+            try
+            {
+<<<<<<< HEAD
+                _UserService.ChangeUserPassword(id, userPasswords);
+                return Ok();
+=======
+                _UserService.ChangeUserBio(id, UserBio.bio);
             }
             catch (Exception e)
             {
@@ -129,14 +166,17 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeUserPassword(id, userPasswords);
-                return Ok();
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
-            catch (Exception e)
+            catch (UserPasswordNotMatchedException e)
             {
-                return NotFound("User not found");
+                return Unauthorized("Old Password Mismatch");
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("User Not Found");
             }
         }
-
 
         [Authorize]
         [HttpPut("username")]
@@ -150,7 +190,10 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeUserName(id, UserName);
+<<<<<<< HEAD
                 return Ok();
+=======
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
             catch (Exception e)
             {
@@ -170,7 +213,10 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.AddContact(id, Guid.Parse(Contact.ContactId));
+<<<<<<< HEAD
                 return Ok();
+=======
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
             catch (FormatException e)
             {
@@ -184,6 +230,10 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
+<<<<<<< HEAD
+=======
+            return Ok();
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
         }
 
         [Authorize]
@@ -198,7 +248,10 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.DeleteContact(id, Guid.Parse(Contact.ContactId));
+<<<<<<< HEAD
                 return Ok();
+=======
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
             catch (FormatException e)
             {
@@ -208,8 +261,15 @@ namespace ProjectsHub.API.Controllers
             {
                 return Ok();
             }
+<<<<<<< HEAD
         }
 
+
+=======
+            return Ok();
+        }
+
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
         [Authorize]
         [HttpGet("Contacts")]
         public async Task<IActionResult> UserContacts()
@@ -235,10 +295,15 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
+<<<<<<< HEAD
 
         [Authorize]
+=======
+        [Authorize]
+        [HttpGet()]
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
         [HttpGet("{id}")]
-        public async Task<IActionResult> userProfile(string id)
+        public async Task<IActionResult> userProfile(string? id)
         {
             var userId = new Guid();
 

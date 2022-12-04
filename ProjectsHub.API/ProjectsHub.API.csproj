@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core\ProjectsHub.Core.csproj" />
     <ProjectReference Include="..\ProjectsHub.Data\ProjectsHub.Data.csproj" />
     <ProjectReference Include="..\ProjectsHub.Model\ProjectsHub.Model.csproj" />
   </ItemGroup>

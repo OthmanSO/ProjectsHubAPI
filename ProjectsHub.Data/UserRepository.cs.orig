@@ -36,20 +36,43 @@ namespace ProjectsHub.Data
 
         public IEnumerable<Guid> GetUserContacts(Guid userId)
         {
+<<<<<<< HEAD
             var user = GetUserAccountByID(userId);
+=======
+            var user = (from User in UsersList
+                        where User._Id == userId
+                        select User).First();
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             return user.Contacts != null ? user.Contacts : new List<Guid>();
         }
 
         public void DeleteContact(Guid userId, Guid contactId)
         {
+<<<<<<< HEAD
             var usr = GetUserAccountByID(userId);
+=======
+            var usr = (from User in UsersList
+                       where User._Id == userId
+                       select User).First();
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             usr.Contacts.Remove(contactId);
         }
 
         public void AddContact(Guid userId, Guid contactId)
         {
+<<<<<<< HEAD
+
             var user1 = GetUserAccountByID(userId); 
             var user2 = GetUserAccountByID(contactId);
+=======
+            var user1 = (from User in UsersList
+                         where User._Id == userId
+                         select User).First();
+
+            var user2 = (from User in UsersList
+                         where User._Id == contactId
+                         select User).First();
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
 
             if (user1.Contacts == null)
                 user1.Contacts = new List<Guid>();
@@ -78,7 +101,7 @@ namespace ProjectsHub.Data
         {
             return (from userAccount in UsersList
                     where userAccount.Email == Email
-                    select userAccount).FirstOrDefault();
+                    select userAccount).First();
         }
 
         public Guid CreateUser(UserAccountCreate user)

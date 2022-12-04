@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.API.Services;
 using ProjectsHub.Data;
 using System.Text;
+using ProjectsHub.Core;
+using ProjectsHub.API.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -24,19 +25,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuerSigningKey = true,
-        ValidateIssuer = false,
-        ValidateAudience = true,
+        ValidateIssuer = true,
+        ValidateAudience = false,
         ValidateLifetime = true,
         ValidAudience = builder.Configuration["JWT:Audience"],
         ValidIssuer = builder.Configuration["JWT:Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
     };
 });
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<UserRepository>();
+builder.Services.AddScoped<IUserToken,UserToken>();
 
 var app = builder.Build();
 
@@ -50,9 +53,8 @@ if (app.Environment.IsDevelopment())
 IConfiguration configuration = app.Configuration;
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
