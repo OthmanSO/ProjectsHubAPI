@@ -82,7 +82,6 @@ namespace ProjectsHub.Data
 
         public IEnumerable<Guid> GetUserContacts(Guid userId)
         {
-<<<<<<< HEAD
             var user = GetUserAccountByID(userId);
             return user.Contacts != null ? user.Contacts : new List<Guid>();
         }
