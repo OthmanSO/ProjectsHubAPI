@@ -9,6 +9,7 @@ using System.Text;
 using ProjectsHub.API.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using ProjectsHub.API.Model;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -105,6 +106,7 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("ProfilePicture/{id}")]
         public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic, string id)
         {
@@ -235,12 +237,8 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
-<<<<<<< HEAD
-                _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
-                return Ok();
-=======
                 _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
+                return Ok();
             }
             catch (FormatException e)
             {
@@ -348,9 +346,13 @@ namespace ProjectsHub.API.Controllers
         {
             Guid userId;
             var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userClaims = identity.Claims;
-            userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            return userId;
+            if (identity == null)
+            {
+                var userClaims = identity.Claims;
+                userId = Guid.Parse(userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                return userId;
+            }
+            throw new UserNotLoggedInException();
         }
     }
 }
