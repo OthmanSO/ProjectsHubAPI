@@ -114,28 +114,6 @@ namespace ProjectsHub.Data
             {
                 user2.Contacts.Add(userId);
             }
-=======
-            var user = (from User in UsersList
-                        where User._Id == userId
-                        select User).First();
-            return user.Contacts != null ? user.Contacts : new List<Guid>();
-        }
-
-        public void AddContact(Guid userId, Guid contactId)
-        {
-            var user1 = (from User in UsersList
-                         where User._Id == userId
-                         select User).First();
-            var user2 = (from User in UsersList
-                         where user1._Id == contactId
-                         select User).First();
-            if(user1.Contacts == null )
-                user1.Contacts = new List<Guid>();
-            if (user2.Contacts == null )
-                user2.Contacts = new List<Guid>();
-            user1.Contacts.Append(contactId);
-            user2.Contacts.Append(userId);
->>>>>>> f694bdc (Get UserContacts)
         }
 
         public void setUserBio(Guid userId, String Bio)

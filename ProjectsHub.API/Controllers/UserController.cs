@@ -252,6 +252,7 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var Contacts = _UserService.GetUserContacts(userId, _UserRepository);
+<<<<<<< HEAD
                 List<IdDto> ContactsList = new List<IdDto>();
                 foreach (var Contact in Contacts)
                 {
@@ -267,6 +268,15 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
+=======
+                return Ok(Contacts);
+            }
+            catch(ArgumentNullException e)
+            {
+                return NotFound("user Not Found");
+            }
+            
+>>>>>>> 3536ffd (fixed the controller in get contacts)
         }
 
 
