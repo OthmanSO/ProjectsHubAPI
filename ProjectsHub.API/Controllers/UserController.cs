@@ -106,7 +106,6 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User Not Found");
             }
-
         }
 
         [HttpPut("ProfilePicture/{id}")]
@@ -119,12 +118,12 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture, _UserRepository);
+                return Ok();
             }
             catch (Exception e)
             {
                 return NotFound("User not found");
             }
-            return Ok();
         }
         [HttpPut("Bio/{id}")]
         public async Task<IActionResult> ChangeBio([FromBody] BioDto UserBio, string id)
@@ -136,12 +135,12 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeUserBio(Guid.Parse(id), UserBio.bio, _UserRepository);
+                return Ok();
             }
             catch (Exception e)
             {
                 return NotFound("User not found");
             }
-            return Ok();
         }
 
         [HttpPut("Password/{id}")]
@@ -154,6 +153,7 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeUserPassword(Guid.Parse(id), userPasswords, _UserRepository);
+                return Ok();
             }
             catch (UserPasswordNotMatchedException e)
             {
@@ -163,7 +163,6 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User Not Found");
             }
-            return Ok();
         }
 
         [HttpPut("username/{id}")]
@@ -176,12 +175,12 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeUserName(Guid.Parse(id), UserName, _UserRepository);
+                return Ok();
             }
             catch (Exception e)
             {
                 return NotFound("User not found");
             }
-            return Ok();
         }
 
         [HttpPut("Contacts/{id}")]
@@ -194,6 +193,7 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
+                return Ok();
             }
             catch (FormatException e)
             {
@@ -207,7 +207,6 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-            return Ok();
         }
 
         [HttpDelete("Contacts/{id}")]
@@ -270,7 +269,6 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-        //[HttpGet()]
         [HttpGet("{id}")]
         public async Task<IActionResult> userProfile(string id)
         {

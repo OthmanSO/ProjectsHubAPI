@@ -58,26 +58,20 @@ namespace ProjectsHub.Data
 
         public void setProfilePic(Guid userId, string encodedProfilePic)
         {
-            var userAccount = (from User in UsersList
-                               where User._Id == userId
-                               select User).First();
+            var userAccount = GetUserAccountByID(userId);   
             userAccount.ProfilePicture = encodedProfilePic;
         }
 
         public void setUserName(Guid userId, UserNameDto newUserName)
         {
-            var userAccount = (from User in UsersList
-                               where User._Id == userId
-                               select User).First();
+            var userAccount = GetUserAccountByID(userId);
             userAccount.FirstName = newUserName.FirstName;
             userAccount.LastName = newUserName.LastName;
         }
 
         public void SetUserPassword(Guid userId, string password)
         {
-            var userAccount = (from User in UsersList
-                               where User._Id == userId
-                               select User).First();
+            var userAccount = GetUserAccountByID(userId);
             userAccount.Password = password;
         }
 
@@ -88,29 +82,21 @@ namespace ProjectsHub.Data
 
         public IEnumerable<Guid> GetUserContacts(Guid userId)
         {
-            var user = (from User in UsersList
-                        where User._Id == userId
-                        select User).First();
+            var user = GetUserAccountByID(userId);
             return user.Contacts != null ? user.Contacts : new List<Guid>();
         }
 
         public void DeleteContact(Guid userId, Guid contactId)
         {
-            var usr = (from User in UsersList
-                       where User._Id == userId
-                       select User).First();
+            var usr = GetUserAccountByID(userId);
             usr.Contacts.Remove(contactId);
         }
 
         public void AddContact(Guid userId, Guid contactId)
         {
-            var user1 = (from User in UsersList
-                         where User._Id == userId
-                         select User).First();
+            var user1 = GetUserAccountByID(userId); 
 
-            var user2 = (from User in UsersList
-                         where User._Id == contactId
-                         select User).First();
+            var user2 = GetUserAccountByID(contactId);
 
             if (user1.Contacts == null)
                 user1.Contacts = new List<Guid>();
@@ -131,17 +117,15 @@ namespace ProjectsHub.Data
 
         public void setUserBio(Guid userId, String Bio)
         {
-            var userAccount = (from User in UsersList
-                               where User._Id == userId
-                               select User).First();
+            var userAccount = GetUserAccountByID(userId);
             userAccount.Bio = Bio;
         }
 
-        public UserAccount? GetUserByEmail(String Email)
+        public UserAccount GetUserByEmail(String Email)
         {
             return (from userAccount in UsersList
                     where userAccount.Email == Email
-                    select userAccount).FirstOrDefault();
+                    select userAccount).First();
         }
 
         public Guid CreateUser(UserAccountCreate user)
@@ -152,7 +136,7 @@ namespace ProjectsHub.Data
             return _Id;
         }
 
-        public UserAccountProfileDto GetUserById(Guid userId)
+        public UserAccountProfileDto GetUserById (Guid userId) 
         {
             List<Guid> lastFivePosts = new List<Guid>();
             List<Guid> lastFiveProjects = new List<Guid>();
