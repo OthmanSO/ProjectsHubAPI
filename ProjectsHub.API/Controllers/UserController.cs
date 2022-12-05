@@ -240,7 +240,9 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
+
         [Authorize]
+        [HttpGet("Followers")]
         [HttpGet("Followers/{userId}")]
         public async Task<IActionResult> GetUserFollowers(string userId)
         {
@@ -272,8 +274,9 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("Following")]
         [HttpGet("Following/{userId}")]
-        public async Task<IActionResult> GetUserFollowing(string userId)
+        public async Task<IActionResult> GetUserFollowing(string? userId)
         {
             Guid id;
             try
