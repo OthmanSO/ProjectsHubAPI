@@ -448,7 +448,7 @@ namespace ProjectsHub.API.Controllers
             {
                 id = Guid.Parse(userId);
             }
-            catch (FormatException e)
+            catch (Exception e)
             {
                 id = _userToken.GetUserIdFromToken();
             }
