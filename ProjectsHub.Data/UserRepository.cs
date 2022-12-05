@@ -171,11 +171,11 @@ namespace ProjectsHub.Data
             if (FollowedUser.Followers == null)
                 FollowedUser.Followers = new List<Guid>();
 
-            if (user.Following.Any(x => x.Equals(unfollowUserId)))
+            if (!user.Following.Any(x => x.Equals(unfollowUserId)))
             {
                 user.Following.Add(unfollowUserId);
             }
-            if (FollowedUser.Followers.Any(x => x.Equals(userId)))
+            if (!FollowedUser.Followers.Any(x => x.Equals(userId)))
             {
                 user.Following.Add(userId);
             }
