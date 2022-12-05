@@ -177,7 +177,7 @@ namespace ProjectsHub.Data
             }
             if (!FollowedUser.Followers.Any(x => x.Equals(userId)))
             {
-                user.Following.Add(userId);
+                FollowedUser.Followers.Add(userId);
             }
         }
     }
