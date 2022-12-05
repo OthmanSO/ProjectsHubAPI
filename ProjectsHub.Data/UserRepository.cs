@@ -163,12 +163,19 @@ namespace ProjectsHub.Data
         public void FollowUser(Guid userId, Guid unfollowUserId)
         {
             var user = GetUserAccountByID(userId);
-            if (user.Following != null && user.Following.Any(x => x.Equals(unfollowUserId)))
+            var FollowedUser = GetUserAccountByID(unfollowUserId);
+
+            if (user.Following == null)
+                user.Following = new List<Guid>();
+
+            if (FollowedUser.Followers == null)
+                FollowedUser.Followers = new List<Guid>();
+
+            if (user.Following.Any(x => x.Equals(unfollowUserId)))
             {
                 user.Following.Add(unfollowUserId);
             }
-            var FollowedUser = GetUserAccountByID(unfollowUserId);
-            if (FollowedUser.Followers != null && FollowedUser.Followers.Any(x => x.Equals(userId)))
+            if (FollowedUser.Followers.Any(x => x.Equals(userId)))
             {
                 user.Following.Add(userId);
             }
