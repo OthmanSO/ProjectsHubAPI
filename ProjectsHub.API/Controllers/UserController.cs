@@ -356,13 +356,19 @@ namespace ProjectsHub.API.Controllers
             Guid id;
             try
             {
-                id = Guid.Parse(userId);
+                if (!userId.IsNullOrEmpty())
+                {
+                    id = Guid.Parse(userId);
+                }
+                else
+                {
+                    id = _userToken.GetUserIdFromToken();
+                }
             }
             catch (Exception e)
             {
-                id = _userToken.GetUserIdFromToken();
+                return BadRequest();
             }
-
             try
             {
                 var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
@@ -381,16 +387,22 @@ namespace ProjectsHub.API.Controllers
             Guid id;
             try
             {
-                id = Guid.Parse(userId);
+                if (!userId.IsNullOrEmpty())
+                {
+                    id = Guid.Parse(userId);
+                }
+                else
+                {
+                    id = _userToken.GetUserIdFromToken();
+                }
             }
-            catch (FormatException e)
+            catch (Exception e)
             {
-                id = _userToken.GetUserIdFromToken();
+                return BadRequest();
             }
-
             try
             {
-                var listOfUsersThatUserAccountFollow= _UserService.GetListOfFollwing(id);
+                var listOfUsersThatUserAccountFollow = _UserService.GetListOfFollwing(id);
                 return Ok(listOfUsersThatUserAccountFollow);
             }
             catch (Exception e)
