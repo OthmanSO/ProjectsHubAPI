@@ -131,6 +131,14 @@ namespace ProjectsHub.Data
             };
         }
 
+        public List<Guid> GetGetListOfFollwers(Guid userId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Followers == null)
+                user.Followers = new List<Guid>();
+            return user.Followers;
+        }
+
         public void UnfollowUser(Guid userId, Guid unfollowUserId)
         {
             var user = GetUserAccountByID(userId);

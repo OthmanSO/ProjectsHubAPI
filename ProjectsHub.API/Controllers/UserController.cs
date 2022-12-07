@@ -35,7 +35,7 @@ namespace ProjectsHub.API.Controllers
             {
                 var userId = _UserService.CreateUser(user);
                 var userName = $"{user.FirstName} {user.LastName}";
-                var tokenString = _userToken.CreateUserToken(userId , userName, user.Email )
+                var tokenString = _userToken.CreateUserToken(userId, userName, user.Email);
                 return Created(userId.ToString(), tokenString);
 
             }
@@ -294,7 +294,7 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
-        [HttpPut("Follow/{id}")]
+        [HttpPut("Follow/{followUserId}")]
         public async Task<IActionResult> FollowUser(string followUserId)
         {
             if (followUserId.IsNullOrEmpty())
@@ -322,7 +322,7 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
-        [HttpPut("Follow/{id}")]
+        [HttpPut("Unfollow/{unfollowUserId}")]
         public async Task<IActionResult> UnfollowUser(string unfollowUserId)
         {
             if (unfollowUserId.IsNullOrEmpty())
@@ -347,6 +347,31 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("Followers/{userId}")]
+        public async Task<IActionResult> GetUserFollowers(string userId)
+        {
+            Guid id;
+            try
+            {
+                id = Guid.Parse(userId);
+            }
+            catch (FormatException e)
+            {
+                id = _userToken.GetUserIdFromToken();
+            }
+
+            try
+            {
+                var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
+                return Ok(listOfUsersFollowingUserAccount);
+            }
+            catch (Exception e)
+            {
+                return NotFound("user Not Found");
+            }
         }
     }
 }

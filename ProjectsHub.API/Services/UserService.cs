@@ -116,5 +116,10 @@ namespace ProjectsHub.API.Services
 
             _userRepository.UnfollowUser(userId, unfollowUserId);
         }
+
+        internal List<Guid> GetListOfFollwers(Guid userId)
+        {
+            return _userRepository.GetGetListOfFollwers(userId);
+        }
     }
 }
