@@ -89,7 +89,7 @@ namespace ProjectsHub.Data
             return _Id;
         }
 
-        public UserAccountProfileDto GetUserById (Guid userId) 
+        public UserAccountProfileDto GetUserById(Guid userId)
         {
             List<Guid> lastFivePosts = new List<Guid>();
             List<Guid> lastFiveProjects = new List<Guid>();

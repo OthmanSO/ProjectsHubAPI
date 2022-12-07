@@ -101,8 +101,12 @@ namespace ProjectsHub.API.Services
 =======
         internal void AddContact(Guid userId, Guid contactId, UserRepository userRepository)
         {
+<<<<<<< HEAD
                 userRepository.AddContact(userId, contactId);
 >>>>>>> f27bcb2 (Put Contact)
+=======
+            userRepository.AddContact(userId, contactId);
+>>>>>>> 25cae32 (formatting issues cleaning)
         }
 
         internal IEnumerable<Guid> GetUserContacts(Guid userId, UserRepository userRepository)
