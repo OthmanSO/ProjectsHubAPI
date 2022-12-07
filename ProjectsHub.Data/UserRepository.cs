@@ -132,6 +132,7 @@ namespace ProjectsHub.Data
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         public object GetGetListOfFollwing(Guid userId)
         {
             var user = GetUserAccountByID(userId);
@@ -183,6 +184,35 @@ namespace ProjectsHub.Data
                         select userAccount).First();
             user.Following.Add(followUserId);
 >>>>>>> bb218f9 (Put FollowUser)
+=======
+        public void UnfollowUser(Guid userId, Guid unfollowUserId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Following != null)
+            {
+                user.Following.Remove(unfollowUserId);
+            }
+
+            var UnfollowedUser = GetUserAccountByID(unfollowUserId);
+            if (UnfollowedUser.Followers != null)
+            {
+                UnfollowedUser.Followers.Remove(userId);
+            }
+        }
+
+        public void FollowUser(Guid userId, Guid unfollowUserId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Following != null)
+            {
+                user.Following.Add(unfollowUserId);
+            }
+            var FollowedUser = GetUserAccountByID(unfollowUserId);
+            if (FollowedUser.Followers != null)
+            {
+                user.Following.Add(userId);
+            }
+>>>>>>> d8b5128 (Put unfollow  + Fix Follow)
         }
     }
 }
