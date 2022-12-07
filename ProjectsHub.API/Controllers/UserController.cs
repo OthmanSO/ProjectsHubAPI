@@ -292,5 +292,61 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
+
+        [Authorize]
+        [HttpPut("Follow/{id}")]
+        public async Task<IActionResult> FollowUser(string followUserId)
+        {
+            if (followUserId.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            var id = _userToken.GetUserIdFromToken();
+            try
+            {
+                _UserService.FollowUser(id, Guid.Parse(followUserId));
+            }
+            catch (FormatException e)
+            {
+                return BadRequest();
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("User not found");
+            }
+            catch (InvalidOperationException e)
+            {
+                return NotFound("user Not Found");
+            }
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPut("Follow/{id}")]
+        public async Task<IActionResult> UnfollowUser(string unfollowUserId)
+        {
+            if (unfollowUserId.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            var id = _userToken.GetUserIdFromToken();
+            try
+            {
+                _UserService.UnfollowUser(id, Guid.Parse(unfollowUserId));
+            }
+            catch (FormatException e)
+            {
+                return BadRequest();
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound("User not found");
+            }
+            catch (InvalidOperationException e)
+            {
+                return NotFound("user Not Found");
+            }
+            return Ok();
+        }
     }
 }

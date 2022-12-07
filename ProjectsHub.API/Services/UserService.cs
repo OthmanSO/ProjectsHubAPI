@@ -107,5 +107,14 @@ namespace ProjectsHub.API.Services
 
             _userRepository.FollowUser(userId, followUserId); 
         }
+
+        internal void UnfollowUser(Guid userId, Guid unfollowUserId)
+        {
+            //check if exist
+            var loggedinUser = _userRepository.GetUserById(userId);
+            var followUser = _userRepository.GetUserById(unfollowUserId);
+
+            _userRepository.UnfollowUser(userId, unfollowUserId);
+        }
     }
 }

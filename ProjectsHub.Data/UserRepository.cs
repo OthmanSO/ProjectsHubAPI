@@ -131,12 +131,33 @@ namespace ProjectsHub.Data
             };
         }
 
-        public void FollowUser(Guid userId, Guid followUserId)
+        public void UnfollowUser(Guid userId, Guid unfollowUserId)
         {
-            var user = (from userAccount in UsersList
-                        where userId == userAccount._Id
-                        select userAccount).First();
-            user.Following.Add(followUserId);
+            var user = GetUserAccountByID(userId);
+            if (user.Following != null)
+            {
+                user.Following.Remove(unfollowUserId);
+            }
+
+            var UnfollowedUser = GetUserAccountByID(unfollowUserId);
+            if (UnfollowedUser.Followers != null)
+            {
+                UnfollowedUser.Followers.Remove(userId);
+            }
+        }
+
+        public void FollowUser(Guid userId, Guid unfollowUserId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Following != null)
+            {
+                user.Following.Add(unfollowUserId);
+            }
+            var FollowedUser = GetUserAccountByID(unfollowUserId);
+            if (FollowedUser.Followers != null)
+            {
+                user.Following.Add(userId);
+            }
         }
     }
 }
