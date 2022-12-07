@@ -131,6 +131,7 @@ namespace ProjectsHub.Data
             };
         }
 
+<<<<<<< HEAD
         public object GetGetListOfFollwing(Guid userId)
         {
             var user = GetUserAccountByID(userId);
@@ -174,6 +175,14 @@ namespace ProjectsHub.Data
             {
                 user.Following.Add(userId);
             }
+=======
+        public void FollowUser(Guid userId, Guid followUserId)
+        {
+            var user = (from userAccount in UsersList
+                        where userId == userAccount._Id
+                        select userAccount).First();
+            user.Following.Add(followUserId);
+>>>>>>> bb218f9 (Put FollowUser)
         }
     }
 }

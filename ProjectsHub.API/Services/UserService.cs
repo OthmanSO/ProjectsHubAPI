@@ -107,6 +107,7 @@ namespace ProjectsHub.API.Services
 
             _userRepository.FollowUser(userId, followUserId); 
         }
+<<<<<<< HEAD
 
         internal void UnfollowUser(Guid userId, Guid unfollowUserId)
         {
@@ -126,5 +127,7 @@ namespace ProjectsHub.API.Services
         {
             return _userRepository.GetGetListOfFollwing(userId);
         }
+=======
+>>>>>>> bb218f9 (Put FollowUser)
     }
 }
