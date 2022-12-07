@@ -107,10 +107,6 @@ namespace ProjectsHub.API.Services
 
             _userRepository.FollowUser(userId, followUserId); 
         }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d8b5128 (Put unfollow  + Fix Follow)
 
         internal void UnfollowUser(Guid userId, Guid unfollowUserId)
         {
@@ -120,26 +116,15 @@ namespace ProjectsHub.API.Services
 
             _userRepository.UnfollowUser(userId, unfollowUserId);
         }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bcf45f8 (Fix urls parameters)
 
         internal List<Guid> GetListOfFollwers(Guid userId)
         {
             return _userRepository.GetGetListOfFollwers(userId);
         }
-<<<<<<< HEAD
 
-        internal object GetListOfFollwing(Guid userId)
+        internal List<Guid> GetListOfFollwing(Guid userId)
         {
             return _userRepository.GetGetListOfFollwing(userId);
         }
-=======
->>>>>>> bb218f9 (Put FollowUser)
-=======
->>>>>>> d8b5128 (Put unfollow  + Fix Follow)
-=======
->>>>>>> bcf45f8 (Fix urls parameters)
     }
 }

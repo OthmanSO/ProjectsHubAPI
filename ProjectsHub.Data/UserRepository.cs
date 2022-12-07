@@ -131,19 +131,13 @@ namespace ProjectsHub.Data
             };
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-        public object GetGetListOfFollwing(Guid userId)
+        public List<Guid> GetGetListOfFollwing(Guid userId)
         {
             var user = GetUserAccountByID(userId);
             if (user.Following == null)
                 user.Following = new List<Guid>();
             return user.Following;
         }
-
-=======
->>>>>>> bcf45f8 (Fix urls parameters)
         public List<Guid> GetGetListOfFollwers(Guid userId)
         {
             var user = GetUserAccountByID(userId);
@@ -179,43 +173,6 @@ namespace ProjectsHub.Data
             {
                 user.Following.Add(userId);
             }
-=======
-        public void FollowUser(Guid userId, Guid followUserId)
-        {
-            var user = (from userAccount in UsersList
-                        where userId == userAccount._Id
-                        select userAccount).First();
-            user.Following.Add(followUserId);
->>>>>>> bb218f9 (Put FollowUser)
-=======
-        public void UnfollowUser(Guid userId, Guid unfollowUserId)
-        {
-            var user = GetUserAccountByID(userId);
-            if (user.Following != null)
-            {
-                user.Following.Remove(unfollowUserId);
-            }
-
-            var UnfollowedUser = GetUserAccountByID(unfollowUserId);
-            if (UnfollowedUser.Followers != null)
-            {
-                UnfollowedUser.Followers.Remove(userId);
-            }
-        }
-
-        public void FollowUser(Guid userId, Guid unfollowUserId)
-        {
-            var user = GetUserAccountByID(userId);
-            if (user.Following != null)
-            {
-                user.Following.Add(unfollowUserId);
-            }
-            var FollowedUser = GetUserAccountByID(unfollowUserId);
-            if (FollowedUser.Followers != null)
-            {
-                user.Following.Add(userId);
-            }
->>>>>>> d8b5128 (Put unfollow  + Fix Follow)
         }
     }
 }
