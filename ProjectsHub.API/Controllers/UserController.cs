@@ -14,12 +14,20 @@ namespace ProjectsHub.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _UserService;
+<<<<<<< HEAD
         private readonly IUserToken _userToken;
 
         public UserController(UserService userService, IUserToken usrToken)
         {
             _UserService = userService ?? throw new ArgumentNullException(nameof(UserService));
             _userToken = usrToken ?? throw new ArgumentNullException(nameof(usrToken));
+=======
+        IConfiguration _Configuration;
+        public UserController(UserService userService, IConfiguration _conf)
+        {
+            _UserService = userService ?? throw new ArgumentNullException(nameof(UserService));
+            _Configuration = _conf ?? throw new ArgumentNullException(nameof(IConfiguration));
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
         }
 
         [HttpPost("signup")]
@@ -34,8 +42,30 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var userId = _UserService.CreateUser(user);
+<<<<<<< HEAD
                 var userName = $"{user.FirstName} {user.LastName}";
                 var tokenString = _userToken.CreateUserToken(userId , userName, user.Email );
+=======
+
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier , userId.ToString() ),
+                    new Claim(ClaimTypes.GivenName , $"{user.FirstName} {user.LastName}"),
+                    new Claim(ClaimTypes.Email, user.Email)
+                };
+
+                var tok = new JwtSecurityToken(
+                    issuer: _Configuration["Jwt:Issuer"],
+                    audience: _Configuration["Jwt: Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMinutes(60),
+                    notBefore: DateTime.UtcNow,
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
+                        SecurityAlgorithms.HmacSha256)
+                    );
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
                 return Created(userId.ToString(), tokenString);
 
             }
@@ -56,8 +86,29 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var loggedInUser = _UserService.GetLoggedInUser(user.Email, user.Password);
+<<<<<<< HEAD
                 var userName = $"{loggedInUser.FirstName} {loggedInUser.LastName}";
                 var tokenString = _userToken.CreateUserToken(loggedInUser._Id, userName, loggedInUser.Email);
+=======
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier , loggedInUser._Id.ToString() ),
+                    new Claim(ClaimTypes.GivenName , $"{loggedInUser.FirstName} {loggedInUser.LastName}"),
+                    new Claim(ClaimTypes.Email, loggedInUser.Email)
+                };
+
+                var tok = new JwtSecurityToken(
+                    issuer: _Configuration["Jwt:Issuer"],
+                    audience: _Configuration["Jwt: Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMinutes(60),
+                    notBefore: DateTime.UtcNow,
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
+                        SecurityAlgorithms.HmacSha256)
+                    );
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
                 return Ok(tokenString);
             }
             catch (UserPasswordNotMatchedException e)
@@ -84,7 +135,10 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture);
+<<<<<<< HEAD
                 return Ok();
+=======
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
@@ -105,8 +159,12 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
+<<<<<<< HEAD
                 _UserService.ChangeUserBio(id, UserBio.bio); 
                 return Ok();
+=======
+                _UserService.ChangeUserBio(Guid.Parse(id), UserBio.bio);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
@@ -128,8 +186,12 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
+<<<<<<< HEAD
                 _UserService.ChangeUserPassword(id, userPasswords);
                 return Ok();
+=======
+                _UserService.ChangeUserPassword(Guid.Parse(id), userPasswords);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (UserPasswordNotMatchedException e)
             {
@@ -152,8 +214,12 @@ namespace ProjectsHub.API.Controllers
             var id = _userToken.GetUserIdFromToken();
             try
             {
+<<<<<<< HEAD
                 _UserService.ChangeUserName(id, UserName);
                 return Ok();
+=======
+                _UserService.ChangeUserName(Guid.Parse(id), UserName);
+>>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
@@ -187,7 +253,7 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
-                _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
+                _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
             }
 <<<<<<< HEAD
             catch(FormatException e)
@@ -280,7 +346,7 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
-                _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
+                _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
             }
             catch (FormatException e)
             {
@@ -313,7 +379,7 @@ namespace ProjectsHub.API.Controllers
             }
             try
             {
-                var Contacts = _UserService.GetUserContacts(userId, _UserRepository);
+                var Contacts = _UserService.GetUserContacts(userId);
                 List<IdDto> ContactsList = new List<IdDto>();
                 foreach (var Contact in Contacts)
                 {
@@ -371,7 +437,7 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                var userShortProfile =  _UserService.GetUserShortPeofile(Guid.Parse(id), _UserRepository);
+                var userShortProfile = _UserService.GetUserShortPeofile(Guid.Parse(id));
                 return Ok(userShortProfile);
             }
             catch (FormatException e)
