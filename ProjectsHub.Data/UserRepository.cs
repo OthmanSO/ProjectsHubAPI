@@ -130,5 +130,13 @@ namespace ProjectsHub.Data
                 Projects = lastFiveProjects
             };
         }
+
+        public void FollowUser(Guid userId, Guid followUserId)
+        {
+            var user = (from userAccount in UsersList
+                        where userId == userAccount._Id
+                        select userAccount).First();
+            user.Following.Add(followUserId);
+        }
     }
 }

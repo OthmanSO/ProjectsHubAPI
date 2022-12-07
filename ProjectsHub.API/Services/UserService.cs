@@ -98,5 +98,14 @@ namespace ProjectsHub.API.Services
             var userShortProfile = new UserShortProfileDto { _id = user._Id, FirstName = user.FirstName, LastName = user.LastName, ProfilePic = user.ProfilePicture };
             return userShortProfile;
         }
+
+        internal void FollowUser(Guid userId, Guid followUserId)
+        {
+            //check if exist
+            var loggedinUser = _userRepository.GetUserById(userId);
+            var followUser = _userRepository.GetUserById(followUserId);
+
+            _userRepository.FollowUser(userId, followUserId); 
+        }
     }
 }

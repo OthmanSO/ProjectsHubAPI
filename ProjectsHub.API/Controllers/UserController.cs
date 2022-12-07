@@ -14,15 +14,9 @@ namespace ProjectsHub.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _UserService;
-<<<<<<< HEAD
-        IConfiguration _Configuration;
-
-        public UserController(UserService userService, IConfiguration _conf)
-=======
         private readonly IUserToken _userToken;
 
         public UserController(UserService userService, IUserToken usrToken)
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
         {
             _UserService = userService ?? throw new ArgumentNullException(nameof(UserService));
             _userToken = usrToken ?? throw new ArgumentNullException(nameof(usrToken));
@@ -41,11 +35,7 @@ namespace ProjectsHub.API.Controllers
             {
                 var userId = _UserService.CreateUser(user);
                 var userName = $"{user.FirstName} {user.LastName}";
-<<<<<<< HEAD
-                var tokenString = _userToken.CreateUserToken(userId, userName, user.Email);
-=======
-                var tokenString = _userToken.CreateUserToken(userId , userName, user.Email );
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
+                var tokenString = _userToken.CreateUserToken(userId , userName, user.Email )
                 return Created(userId.ToString(), tokenString);
 
             }
@@ -82,11 +72,7 @@ namespace ProjectsHub.API.Controllers
 
         [Authorize]
         [HttpPut("profilePicture")]
-<<<<<<< HEAD
-        public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic, string id)
-=======
         public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic)
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
         {
             if (ProfilePic.EncodedProfilePicture.IsNullOrEmpty())
             {
@@ -121,29 +107,20 @@ namespace ProjectsHub.API.Controllers
             {
                 _UserService.ChangeUserBio(id, UserBio.bio);
                 return Ok();
-=======
-                _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
             }
             catch (Exception e)
             {
                 return NotFound("User not found");
             }
-            return Ok();
         }
 
+       
+
         [Authorize]
-<<<<<<< HEAD
         [HttpPut("Password")]
         public async Task<IActionResult> ChangePassword([FromBody] PasswordUpdateDto userPasswords)
         {
             if (userPasswords.OldPassword.IsNullOrEmpty() || userPasswords.NewPassword.IsNullOrEmpty())
-=======
-        [HttpPut("bio")]
-        public async Task<IActionResult> ChangeBio([FromBody] BioDto UserBio)
-        {
-            if (UserBio.bio.IsNullOrEmpty())
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
             {
                 return BadRequest();
             }
@@ -152,34 +129,8 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-<<<<<<< HEAD
                 _UserService.ChangeUserPassword(id, userPasswords);
                 return Ok();
-=======
-                _UserService.ChangeUserBio(id, UserBio.bio);
-            }
-            catch (Exception e)
-            {
-                return NotFound("User not found");
-            }
-            return Ok();
-        }
-
-        [Authorize]
-        [HttpPut("Password")]
-        public async Task<IActionResult> ChangePassword([FromBody] PasswordUpdateDto userPasswords)
-        {
-            if (userPasswords.OldPassword.IsNullOrEmpty() || userPasswords.NewPassword.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
-
-            var id = _userToken.GetUserIdFromToken();
-
-            try
-            {
-                _UserService.ChangeUserPassword(id, userPasswords);
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
             }
             catch (UserPasswordNotMatchedException e)
             {
@@ -195,11 +146,7 @@ namespace ProjectsHub.API.Controllers
         [HttpPut("username")]
         public async Task<IActionResult> ChangeUsername([FromBody] UserNameDto UserName)
         {
-<<<<<<< HEAD
             if (UserName.FirstName.IsNullOrEmpty() || UserName.LastName.IsNullOrEmpty())
-=======
-            if (UserName.FirstName.IsNullOrEmpty() || UserName.LastName.IsNullOrEmpty() )
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
             {
                 return BadRequest();
             }
@@ -207,10 +154,7 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeUserName(id, UserName);
-<<<<<<< HEAD
                 return Ok();
-=======
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
             }
             catch (Exception e)
             {
@@ -219,13 +163,8 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
-<<<<<<< HEAD
-        [HttpPut("Contacts/{id}")]
-        public async Task<IActionResult> AddContacts([FromBody] ContactDto Contact, string id)
-=======
         [HttpPut("Contacts")]
         public async Task<IActionResult> AddContacts([FromBody] ContactDto Contact)
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
         {
             if (Contact.ContactId.IsNullOrEmpty())
             {
@@ -235,6 +174,7 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.AddContact(id, Guid.Parse(Contact.ContactId));
+                return Ok();
             }
             catch (FormatException e)
             {
@@ -253,7 +193,6 @@ namespace ProjectsHub.API.Controllers
         [Authorize]
         [HttpDelete("Contacts")]
         public async Task<IActionResult> DeleteContacts([FromBody] ContactDto Contact)
-<<<<<<< HEAD
         {
             if (Contact.ContactId.IsNullOrEmpty())
             {
@@ -301,63 +240,9 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
-        [Authorize]
-        [HttpDelete("Contacts/{id}")]
-        public async Task<IActionResult> DeleteContacts([FromBody] ContactDto Contact, string id)
-=======
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
-        {
-            if (Contact.ContactId.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
-            var id = _userToken.GetUserIdFromToken();
-            try
-            {
-                _UserService.DeleteContact(id, Guid.Parse(Contact.ContactId));
-            }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            catch (Exception e)
-            {
-                return Ok();
-            }
-            return Ok();
-        }
 
-        [Authorize]
-        [HttpGet("Contacts")]
-        public async Task<IActionResult> UserContacts()
-        {
-            var id = _userToken.GetUserIdFromToken();
-
-            try
-            {
-                var Contacts = _UserService.GetUserContacts(id);
-                List<IdDto> ContactsList = new List<IdDto>();
-                foreach (var Contact in Contacts)
-                {
-                    ContactsList.Add(new IdDto { Id = Contact });
-                }
-                return Ok(ContactsList);
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound("user Not Found");
-            }
-            catch (InvalidOperationException e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-<<<<<<< HEAD
-
-=======
         [Authorize]
         [HttpGet()]
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
         [HttpGet("{id}")]
         public async Task<IActionResult> userProfile(string? id)
         {
@@ -383,7 +268,7 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             return Ok(userProfile);
         }
-        
+
         [HttpGet("shortProfile/{id}")]
         public async Task<IActionResult> UserShortProfile(string id)
         {
@@ -407,31 +292,5 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
-<<<<<<< HEAD
-
-        private Guid getUserIdFromToken()
-        { 
-            var userId = new Guid();
-
-            try
-            {
-                var userShortProfile = _UserService.GetUserShortPeofile(Guid.Parse(id));
-                return Ok(userShortProfile);
-            }
-            catch (FormatException e)
-            {
-                return BadRequest("Wrong userId");
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound("user Not Found");
-            }
-            catch (InvalidOperationException e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-=======
->>>>>>> 94d8143 (Refactoring Authentication and Autherization)
     }
 }
