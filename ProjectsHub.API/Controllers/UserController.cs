@@ -199,10 +199,14 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("User not found");
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3f00cc4 (fixed the controller in put contacts)
             catch (InvalidOperationException e)
             {
                 return NotFound("user Not Found");
             }
+<<<<<<< HEAD
         }
 
         [Authorize]
@@ -258,6 +262,8 @@ namespace ProjectsHub.API.Controllers
 
         [Authorize]
 =======
+=======
+>>>>>>> 3f00cc4 (fixed the controller in put contacts)
             return Ok();
         }
 
