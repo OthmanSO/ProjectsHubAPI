@@ -161,6 +161,7 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
+<<<<<<< HEAD
         [Authorize]
         [HttpPut("Contacts")]
         public async Task<IActionResult> AddContacts([FromBody] ContactDto Contact)
@@ -176,6 +177,20 @@ namespace ProjectsHub.API.Controllers
                 return Ok();
             }
             catch (FormatException e)
+=======
+        [HttpPut("Contacts/{id}")]
+        public async Task<IActionResult> AddContacts([FromBody] ContactDto Contact, string id)
+        {
+            if (Contact.ContactId.IsNullOrEmpty() || id.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId), _UserRepository);
+            }
+            catch(FormatException e)
+>>>>>>> f27bcb2 (Put Contact)
             {
                 return BadRequest();
             }
@@ -183,6 +198,7 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User not found");
             }
+<<<<<<< HEAD
             catch (InvalidOperationException e)
             {
                 return NotFound("user Not Found");
@@ -241,6 +257,12 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
+=======
+            return Ok();
+        }
+
+        //[HttpGet()]
+>>>>>>> f27bcb2 (Put Contact)
         [HttpGet("{id}")]
         public async Task<IActionResult> userProfile(string? id)
         {

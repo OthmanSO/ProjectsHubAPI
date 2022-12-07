@@ -77,6 +77,7 @@ namespace ProjectsHub.API.Services
             throw new UserPasswordNotMatchedException();
         }
 
+<<<<<<< HEAD
         internal void AddContact(Guid userId, Guid contactId)
         {
             _userRepository.AddContact(userId, contactId);
@@ -97,6 +98,11 @@ namespace ProjectsHub.API.Services
             var user = _userRepository.GetUserById(userId);
             var userShortProfile = new UserShortProfileDto { _id = user._Id, FirstName = user.FirstName, LastName = user.LastName, ProfilePic = user.ProfilePicture };
             return userShortProfile;
+=======
+        internal void AddContact(Guid userId, Guid contactId, UserRepository userRepository)
+        {
+                userRepository.AddContact(userId, contactId);
+>>>>>>> f27bcb2 (Put Contact)
         }
     }
 }

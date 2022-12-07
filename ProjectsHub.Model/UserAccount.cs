@@ -26,6 +26,7 @@
         public IEnumerable<Guid> Following { get; set; }
         public IEnumerable<Guid> Followers { get; set; }
         public IEnumerable<Guid> Contacts { get; set; }
+<<<<<<< HEAD
 >>>>>>> f27bcb2 (Put Contact)
 =======
         public IEnumerable<Guid>? Projects { get; set; }
@@ -36,5 +37,7 @@
 >>>>>>> f694bdc (Get UserContacts)
 =======
 >>>>>>> 4775586 (change user IEnumerables to lists)
+=======
+>>>>>>> f27bcb2 (Put Contact)
     }
 }
