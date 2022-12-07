@@ -133,6 +133,7 @@ namespace ProjectsHub.Data
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         public object GetGetListOfFollwing(Guid userId)
         {
             var user = GetUserAccountByID(userId);
@@ -141,6 +142,8 @@ namespace ProjectsHub.Data
             return user.Following;
         }
 
+=======
+>>>>>>> bcf45f8 (Fix urls parameters)
         public List<Guid> GetGetListOfFollwers(Guid userId)
         {
             var user = GetUserAccountByID(userId);
