@@ -463,5 +463,30 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
+
+        [Authorize]
+        [HttpGet("Following/{userId}")]
+        public async Task<IActionResult> GetUserFollowing(string userId)
+        {
+            Guid id;
+            try
+            {
+                id = Guid.Parse(userId);
+            }
+            catch (FormatException e)
+            {
+                id = _userToken.GetUserIdFromToken();
+            }
+
+            try
+            {
+                var listOfUsersThatUserAccountFollow= _UserService.GetListOfFollwing(id);
+                return Ok(listOfUsersThatUserAccountFollow);
+            }
+            catch (Exception e)
+            {
+                return NotFound("user Not Found");
+            }
+        }
     }
 }
