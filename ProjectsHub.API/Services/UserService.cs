@@ -126,19 +126,19 @@ namespace ProjectsHub.API.Services
             return _userRepository.GetGetListOfFollwing(userId);
         }
 
-        internal IEnumerable<Guid> GetUserContacts(Guid userId, UserRepository userRepository)
+        internal IEnumerable<Guid> GetUserContacts(Guid userId)
         {
-            return userRepository.GetUserContacts(userId);
+            return _userRepository.GetUserContacts(userId);
         }
 
-        internal void DeleteContact(Guid userId, Guid ContactId, UserRepository userRepository)
+        internal void DeleteContact(Guid userId, Guid ContactId)
         {
-            userRepository.DeleteContact(userId, ContactId);
+            _userRepository.DeleteContact(userId, ContactId);
         }
 
-        internal UserShortProfileDto GetUserShortPeofile(Guid userId, UserRepository userRepository)
+        internal UserShortProfileDto GetUserShortPeofile(Guid userId)
         {
-            var user = userRepository.GetUserById(userId);
+            var user = _userRepository.GetUserById(userId);
             var userShortProfile = new UserShortProfileDto { _id = user._Id, FirstName = user.FirstName, LastName = user.LastName, ProfilePic = user.ProfilePicture };
             return userShortProfile;
         }
