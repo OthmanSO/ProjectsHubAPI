@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MongoDB;
 using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.API.Services;
 using ProjectsHub.Data;
 using System.Text;
 using ProjectsHub.Core;
+using ProjectsHub.Model;
 using ProjectsHub.API.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,13 +35,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
     };
 });
-
-builder.Services.AddAuthorization();
-
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<UserRepository>();
 builder.Services.AddScoped<IUserToken,UserToken>();
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.Configure<PostDBOptions>(
+    builder.Configuration.GetSection("BookStoreDatabase"));
+builder.Services.AddPostReopsitory();
 
 var app = builder.Build();
 
