@@ -384,11 +384,7 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
-<<<<<<< HEAD
         [HttpPut("Follow/{followUserId}")]
-=======
-        [HttpPut("Follow/{id}")]
->>>>>>> bb218f9 (Put FollowUser)
         public async Task<IActionResult> FollowUser(string followUserId)
         {
             if (followUserId.IsNullOrEmpty())
@@ -414,7 +410,6 @@ namespace ProjectsHub.API.Controllers
             }
             return Ok();
         }
-<<<<<<< HEAD
 
         [Authorize]
         [HttpPut("Unfollow/{unfollowUserId}")]
@@ -443,57 +438,5 @@ namespace ProjectsHub.API.Controllers
             }
             return Ok();
         }
-
-        [Authorize]
-        [HttpGet("Followers/{userId}")]
-        public async Task<IActionResult> GetUserFollowers(string userId)
-        {
-            Guid id;
-            try
-            {
-                id = Guid.Parse(userId);
-            }
-            catch (FormatException e)
-            {
-                id = _userToken.GetUserIdFromToken();
-            }
-
-            try
-            {
-                var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
-                return Ok(listOfUsersFollowingUserAccount);
-            }
-            catch (Exception e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-
-        [Authorize]
-        [HttpGet("Following/{userId}")]
-        public async Task<IActionResult> GetUserFollowing(string userId)
-        {
-            Guid id;
-            try
-            {
-                id = Guid.Parse(userId);
-            }
-            catch (FormatException e)
-            {
-                id = _userToken.GetUserIdFromToken();
-            }
-
-            try
-            {
-                var listOfUsersThatUserAccountFollow= _UserService.GetListOfFollwing(id);
-                return Ok(listOfUsersThatUserAccountFollow);
-            }
-            catch (Exception e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-=======
->>>>>>> bb218f9 (Put FollowUser)
     }
 }
