@@ -153,6 +153,7 @@ namespace ProjectsHub.Data
             {
                 user.Following.Remove(unfollowUserId);
             }
+
             var UnfollowedUser = GetUserAccountByID(unfollowUserId);
             if (UnfollowedUser.Followers != null)
             {
