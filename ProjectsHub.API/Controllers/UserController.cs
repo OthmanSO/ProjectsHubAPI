@@ -384,7 +384,11 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
+<<<<<<< HEAD
         [HttpPut("Follow/{followUserId}")]
+=======
+        [HttpPut("Follow/{id}")]
+>>>>>>> bb218f9 (Put FollowUser)
         public async Task<IActionResult> FollowUser(string followUserId)
         {
             if (followUserId.IsNullOrEmpty())
@@ -410,6 +414,7 @@ namespace ProjectsHub.API.Controllers
             }
             return Ok();
         }
+<<<<<<< HEAD
 
         [Authorize]
         [HttpPut("Unfollow/{unfollowUserId}")]
@@ -488,5 +493,7 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
+=======
+>>>>>>> bb218f9 (Put FollowUser)
     }
 }
