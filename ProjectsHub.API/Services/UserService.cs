@@ -130,5 +130,17 @@ namespace ProjectsHub.API.Services
         {
             return userRepository.GetUserContacts(userId);
         }
+
+        internal void DeleteContact(Guid userId, Guid ContactId, UserRepository userRepository)
+        {
+            userRepository.DeleteContact(userId, ContactId);
+        }
+
+        internal UserShortProfileDto GetUserShortPeofile(Guid userId, UserRepository userRepository)
+        {
+            var user = userRepository.GetUserById(userId);
+            var userShortProfile = new UserShortProfileDto { _id = user._Id, UserName = $"{user.FirstName} {user.LastName}", ChangeProfilePic = user.ProfilePicture };
+            return userShortProfile;
+        }
     }
 }
