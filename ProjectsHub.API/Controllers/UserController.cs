@@ -4,8 +4,12 @@ using ProjectsHub.Model;
 using ProjectsHub.API.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using ProjectsHub.API.Model;
+<<<<<<< HEAD
 using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.Core;
+=======
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+>>>>>>> 5073a75 (Fixing Authorization with [Authorize])
 
 namespace ProjectsHub.API.Controllers
 {
@@ -122,8 +126,13 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
+<<<<<<< HEAD
         [HttpPut("profilePicture")]
         public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic)
+=======
+        [HttpPut("ProfilePicture/{id}")]
+        public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic, string id)
+>>>>>>> 5073a75 (Fixing Authorization with [Authorize])
         {
             if (ProfilePic.EncodedProfilePicture.IsNullOrEmpty())
             {
