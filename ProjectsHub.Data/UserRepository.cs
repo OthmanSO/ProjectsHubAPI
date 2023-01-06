@@ -138,6 +138,7 @@ namespace ProjectsHub.Data
                 user.Following = new List<Guid>();
             return user.Following;
         }
+
         public List<Guid> GetGetListOfFollwers(Guid userId)
         {
             var user = GetUserAccountByID(userId);

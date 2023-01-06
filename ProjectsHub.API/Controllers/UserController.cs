@@ -358,7 +358,7 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             return Ok(userProfile);
         }
-        
+
         [HttpGet("shortProfile/{id}")]
         public async Task<IActionResult> UserShortProfile(string id)
         {
@@ -437,6 +437,31 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("Followers/{userId}")]
+        public async Task<IActionResult> GetUserFollowers(string userId)
+        {
+            Guid id;
+            try
+            {
+                id = Guid.Parse(userId);
+            }
+            catch (FormatException e)
+            {
+                id = _userToken.GetUserIdFromToken();
+            }
+
+            try
+            {
+                var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
+                return Ok(listOfUsersFollowingUserAccount);
+            }
+            catch (Exception e)
+            {
+                return NotFound("user Not Found");
+            }
         }
     }
 }
