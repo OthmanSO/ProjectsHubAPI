@@ -180,13 +180,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return BadRequest();
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
                 return NotFound("User not found");
-            }
-            catch (InvalidOperationException e)
-            {
-                return NotFound("user Not Found");
             }
         }
 
