@@ -391,7 +391,7 @@ namespace ProjectsHub.API.Controllers
             {
                 return BadRequest();
             }
-            var id = _userToken.GetUserIdFromToken();
+            var id = Guid.Parse(followUserId);
             try
             {
                 _UserService.FollowUser(id, Guid.Parse(followUserId));
