@@ -303,6 +303,33 @@ namespace ProjectsHub.API.Controllers
 
         [Authorize]
         [HttpGet()]
+        [HttpGet("Contacts/{id}")]
+        public async Task<IActionResult> UserContacts(string id)
+        {
+            var userId = new Guid();
+
+            if (id == null)
+            {
+                userId = _userToken.GetUserIdFromToken();
+            }
+            else
+            {
+                userId = Guid.Parse(id);
+            }
+
+            if (userId == Guid.Empty)
+            {
+                return BadRequest("Log in or include user identifier first");
+            }
+
+            var userProfile = _UserService.GetUserContacts(userId);
+
+            if (userProfile == null)
+                return NotFound("user Not Found");
+            return Ok(userProfile);
+        }
+
+        [HttpGet()]
         [HttpGet("{id}")]
         public async Task<IActionResult> userProfile(string? id)
         {

@@ -125,5 +125,10 @@ namespace ProjectsHub.API.Services
         {
             return _userRepository.GetGetListOfFollwing(userId);
         }
+
+        internal IEnumerable<Guid> GetUserContacts(Guid userId, UserRepository userRepository)
+        {
+            return userRepository.GetUserContacts(userId);
+        }
     }
 }
