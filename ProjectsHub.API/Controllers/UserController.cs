@@ -4,12 +4,8 @@ using ProjectsHub.Model;
 using ProjectsHub.API.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using ProjectsHub.API.Model;
-<<<<<<< HEAD
 using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.Core;
-=======
-using Microsoft.AspNetCore.Authentication.JwtBearer;
->>>>>>> 5073a75 (Fixing Authorization with [Authorize])
 
 namespace ProjectsHub.API.Controllers
 {
@@ -18,20 +14,12 @@ namespace ProjectsHub.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _UserService;
-<<<<<<< HEAD
         private readonly IUserToken _userToken;
 
         public UserController(UserService userService, IUserToken usrToken)
         {
             _UserService = userService ?? throw new ArgumentNullException(nameof(UserService));
             _userToken = usrToken ?? throw new ArgumentNullException(nameof(usrToken));
-=======
-        IConfiguration _Configuration;
-        public UserController(UserService userService, IConfiguration _conf)
-        {
-            _UserService = userService ?? throw new ArgumentNullException(nameof(UserService));
-            _Configuration = _conf ?? throw new ArgumentNullException(nameof(IConfiguration));
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
         }
 
         [HttpPost("signup")]
@@ -46,32 +34,9 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var userId = _UserService.CreateUser(user);
-<<<<<<< HEAD
                 var userName = $"{user.FirstName} {user.LastName}";
                 var tokenString = _userToken.CreateUserToken(userId, userName, user.Email);
-=======
-
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier , userId.ToString() ),
-                    new Claim(ClaimTypes.GivenName , $"{user.FirstName} {user.LastName}"),
-                    new Claim(ClaimTypes.Email, user.Email)
-                };
-
-                var tok = new JwtSecurityToken(
-                    issuer: _Configuration["Jwt:Issuer"],
-                    audience: _Configuration["Jwt: Audience"],
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(60),
-                    notBefore: DateTime.UtcNow,
-                    signingCredentials: new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
-                        SecurityAlgorithms.HmacSha256)
-                    );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
                 return Created(userId.ToString(), tokenString);
-
             }
             catch (UserAlreadyExistException ex)
             {
@@ -90,29 +55,8 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var loggedInUser = _UserService.GetLoggedInUser(user.Email, user.Password);
-<<<<<<< HEAD
                 var userName = $"{loggedInUser.FirstName} {loggedInUser.LastName}";
                 var tokenString = _userToken.CreateUserToken(loggedInUser._Id, userName, loggedInUser.Email);
-=======
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier , loggedInUser._Id.ToString() ),
-                    new Claim(ClaimTypes.GivenName , $"{loggedInUser.FirstName} {loggedInUser.LastName}"),
-                    new Claim(ClaimTypes.Email, loggedInUser.Email)
-                };
-
-                var tok = new JwtSecurityToken(
-                    issuer: _Configuration["Jwt:Issuer"],
-                    audience: _Configuration["Jwt: Audience"],
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(60),
-                    notBefore: DateTime.UtcNow,
-                    signingCredentials: new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["Jwt:Key"])),
-                        SecurityAlgorithms.HmacSha256)
-                    );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tok);
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
                 return Ok(tokenString);
             }
             catch (UserPasswordNotMatchedException e)
@@ -126,13 +70,8 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
-<<<<<<< HEAD
         [HttpPut("profilePicture")]
         public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic)
-=======
-        [HttpPut("ProfilePicture/{id}")]
-        public async Task<IActionResult> ChangeProfilePic([FromBody] UserprofilePictureDto ProfilePic, string id)
->>>>>>> 5073a75 (Fixing Authorization with [Authorize])
         {
             if (ProfilePic.EncodedProfilePicture.IsNullOrEmpty())
             {
@@ -143,12 +82,8 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-<<<<<<< HEAD
                 _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
                 return Ok();
-=======
-                _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture);
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
@@ -169,20 +104,14 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-<<<<<<< HEAD
                 _UserService.ChangeUserBio(id, UserBio.bio);
                 return Ok();
-=======
-                _UserService.ChangeUserBio(Guid.Parse(id), UserBio.bio);
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
                 return NotFound("User not found");
             }
         }
-
-       
 
         [Authorize]
         [HttpPut("Password")]
@@ -197,12 +126,8 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-<<<<<<< HEAD
                 _UserService.ChangeUserPassword(id, userPasswords);
                 return Ok();
-=======
-                _UserService.ChangeUserPassword(Guid.Parse(id), userPasswords);
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (UserPasswordNotMatchedException e)
             {
@@ -225,12 +150,8 @@ namespace ProjectsHub.API.Controllers
             var id = _userToken.GetUserIdFromToken();
             try
             {
-<<<<<<< HEAD
                 _UserService.ChangeUserName(id, UserName);
                 return Ok();
-=======
-                _UserService.ChangeUserName(Guid.Parse(id), UserName);
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (Exception e)
             {
@@ -249,12 +170,8 @@ namespace ProjectsHub.API.Controllers
             var id = _userToken.GetUserIdFromToken();
             try
             {
-<<<<<<< HEAD
                 _UserService.AddContact(id, Guid.Parse(Contact.ContactId));
                 return Ok();
-=======
-                _UserService.AddContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (FormatException e)
             {
@@ -277,12 +194,8 @@ namespace ProjectsHub.API.Controllers
             var id = _userToken.GetUserIdFromToken();
             try
             {
-<<<<<<< HEAD
                 _UserService.DeleteContact(id, Guid.Parse(Contact.ContactId));
                 return Ok();
-=======
-                _UserService.DeleteContact(Guid.Parse(id), Guid.Parse(Contact.ContactId));
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
             }
             catch (FormatException e)
             {
@@ -294,7 +207,6 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-
         [Authorize]
         [HttpGet("Contacts")]
         public async Task<IActionResult> UserContacts()
@@ -303,11 +215,7 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-<<<<<<< HEAD
                 var Contacts = _UserService.GetUserContacts(id);
-=======
-                var Contacts = _UserService.GetUserContacts(userId);
->>>>>>> 84b247a (refactoring User repo to be injected in the Services)
                 List<IdDto> ContactsList = new List<IdDto>();
                 foreach (var Contact in Contacts)
                 {
@@ -450,7 +358,7 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             return Ok(userProfile);
         }
-
+        
         [HttpGet("shortProfile/{id}")]
         public async Task<IActionResult> UserShortProfile(string id)
         {
