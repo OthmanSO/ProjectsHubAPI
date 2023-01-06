@@ -371,7 +371,6 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 var userShortProfile = _UserService.GetUserShortPeofile(Guid.Parse(id));
-                return Ok(userShortProfile);
             }
             catch (FormatException e)
             {
