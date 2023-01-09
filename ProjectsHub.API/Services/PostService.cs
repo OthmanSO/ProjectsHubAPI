@@ -5,15 +5,28 @@ namespace ProjectsHub.API.Services
 {
     public class PostService : IPostService
     {
-        private readonly IPostRepository PostRepository;
-        public PostService()
+        private readonly IPostRepository _postRepository;
+        private readonly UserService _userService;
+        public PostService(IPostRepository postRepository, UserService userService)
         {
-
+            this._postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+            this._userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        public void CreatePost(CreatePostDto post, Guid userId)
+        public async Task<Post> CreatePost(CreatePostDto post, string userId)
         {
-            throw new NotImplementedException();
+            //if doesnot exist throw exception 
+            _userService.GetUserProfileById(Guid.Parse(userId));
+            Post createPost = new Post {
+                AuthorId = userId,
+                PostChunks = post.PostChunks,
+                Comments = new List<Comment>(),
+                CoverPicture = post.CoverPicture,
+                CreatedDate = System.DateTime.Now,
+                Title = post.Title,
+                UsersWhoLiked = new List<string>()
+            };
+            return await _postRepository.CreateAsync(createPost);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace ProjectsHub.Core
 {
     public interface IPostService
     {
-        public void CreatePost(CreatePostDto post, Guid userId);
+        public Task<Post> CreatePost(CreatePostDto post, string userId);
     }
 }

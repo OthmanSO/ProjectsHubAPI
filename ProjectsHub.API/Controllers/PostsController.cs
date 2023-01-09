@@ -13,11 +13,12 @@ namespace ProjectsHub.API.Controllers
     public class PostsController : ControllerBase
     {
         private readonly IUserToken _userToken;
-        private readonly IPostService _postservice;
+        private readonly IPostService _postService;
+
         public PostsController (IUserToken userToken, IPostService postService)
         {
             this._userToken = userToken ?? throw new ArgumentNullException(nameof(userToken));
-            this._postservice = postService ?? throw new ArgumentNullException(nameof(postService));
+            this._postService = postService ?? throw new ArgumentNullException(nameof(postService));
         }
 
         [Authorize]
@@ -25,11 +26,24 @@ namespace ProjectsHub.API.Controllers
         public async Task<ActionResult> PostingAPost([FromBody] CreatePostDto post)
         {
             //assert post 
-            if (post.Title != null || post.CoverPicture == null || post.PostChunks == null)
+            if (post.Title == null || post.CoverPicture == null)
             {
                 return BadRequest();
             }
             var id = _userToken.GetUserIdFromToken();
+            try
+            {
+                var CreatedPost = await _postService.CreatePost(post, id.ToString());
+                return Created(CreatedPost._id, CreatedPost);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return Unauthorized();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+            }
         }
     }
 }

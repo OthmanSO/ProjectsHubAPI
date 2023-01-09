@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using MongoDB;
 using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.API.Services;
 using ProjectsHub.Data;
@@ -38,10 +37,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<UserRepository>();
-builder.Services.AddScoped<IUserToken,UserToken>();
+builder.Services.AddScoped<IUserToken, UserToken>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.Configure<PostDBOptions>(
-    builder.Configuration.GetSection("BookStoreDatabase"));
+    builder.Configuration.GetSection("MongoDB"));
 builder.Services.AddPostReopsitory();
 
 var app = builder.Build();

@@ -207,162 +207,75 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
+
+        [Authorize]
+        [HttpGet("Followers")]
+        [HttpGet("Followers/{userId}")]
+        public async Task<IActionResult> GetUserFollowers(string userId)
+        {
+            Guid id;
+            try
+            {
+                if (!userId.IsNullOrEmpty())
+                {
+                    id = Guid.Parse(userId);
+                }
+                else
+                {
+                    id = _userToken.GetUserIdFromToken();
+                }
+            }
+            catch (FormatException e)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
+                return Ok(listOfUsersFollowingUserAccount);
+            }
+            catch (Exception e)
+            {
+                return NotFound("user Not Found");
+            }
+        }
+
+        [Authorize]
+        [HttpGet("Following")]
+        [HttpGet("Following/{userId}")]
+        public async Task<IActionResult> GetUserFollowing(string? userId)
+        {
+            Guid id;
+            try
+            {
+                if (!userId.IsNullOrEmpty())
+                {
+                    id = Guid.Parse(userId);
+                }
+                else
+                {
+                    id = _userToken.GetUserIdFromToken();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var listOfUsersThatUserAccountFollow = _UserService.GetListOfFollwing(id);
+                return Ok(listOfUsersThatUserAccountFollow);
+            }
+            catch (Exception e)
+            {
+                return NotFound("user Not Found");
+            }
+        }
+
+
+
         [Authorize]
         [HttpGet("Contacts")]
-        public async Task<IActionResult> UserContacts()
-        {
-            var id = _userToken.GetUserIdFromToken();
-
-            try
-            {
-                var Contacts = _UserService.GetUserContacts(id);
-                List<IdDto> ContactsList = new List<IdDto>();
-                foreach (var Contact in Contacts)
-                {
-                    ContactsList.Add(new IdDto { Id = Contact });
-                }
-                return Ok(ContactsList);
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound("user Not Found");
-            }
-            catch (InvalidOperationException e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-
-        [Authorize]
-        [HttpGet("Followers")]
-        [HttpGet("Followers/{userId}")]
-        public async Task<IActionResult> GetUserFollowers(string userId)
-        {
-            Guid id;
-            try
-            {
-                if (!userId.IsNullOrEmpty())
-                {
-                    id = Guid.Parse(userId);
-                }
-                else
-                {
-                    id = _userToken.GetUserIdFromToken();
-                }
-            }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
-                return Ok(listOfUsersFollowingUserAccount);
-            }
-            catch (Exception e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-
-        [Authorize]
-        [HttpGet("Following")]
-        [HttpGet("Following/{userId}")]
-        public async Task<IActionResult> GetUserFollowing(string? userId)
-        {
-            Guid id;
-            try
-            {
-                if (!userId.IsNullOrEmpty())
-                {
-                    id = Guid.Parse(userId);
-                }
-                else
-                {
-                    id = _userToken.GetUserIdFromToken();
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var listOfUsersThatUserAccountFollow = _UserService.GetListOfFollwing(id);
-                return Ok(listOfUsersThatUserAccountFollow);
-            }
-            catch (Exception e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-
-        [Authorize]
-        [HttpGet("Followers")]
-        [HttpGet("Followers/{userId}")]
-        public async Task<IActionResult> GetUserFollowers(string userId)
-        {
-            Guid id;
-            try
-            {
-                if (!userId.IsNullOrEmpty())
-                {
-                    id = Guid.Parse(userId);
-                }
-                else
-                {
-                    id = _userToken.GetUserIdFromToken();
-                }
-            }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
-                return Ok(listOfUsersFollowingUserAccount);
-            }
-            catch (Exception e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-
-        [Authorize]
-        [HttpGet("Following")]
-        [HttpGet("Following/{userId}")]
-        public async Task<IActionResult> GetUserFollowing(string? userId)
-        {
-            Guid id;
-            try
-            {
-                if (!userId.IsNullOrEmpty())
-                {
-                    id = Guid.Parse(userId);
-                }
-                else
-                {
-                    id = _userToken.GetUserIdFromToken();
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var listOfUsersThatUserAccountFollow = _UserService.GetListOfFollwing(id);
-                return Ok(listOfUsersThatUserAccountFollow);
-            }
-            catch (Exception e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-
-        [Authorize]
-        [HttpGet()]
         [HttpGet("Contacts/{id}")]
         public async Task<IActionResult> UserContacts(string id)
         {
@@ -386,7 +299,7 @@ namespace ProjectsHub.API.Controllers
                 var Contacts = _UserService.GetUserContacts(userId);
                 return Ok(Contacts);
             }
-            catch(ArgumentNullException e)
+            catch (ArgumentNullException e)
             {
                 return NotFound("user Not Found");
             }
