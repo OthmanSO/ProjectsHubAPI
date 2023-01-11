@@ -1,5 +1,6 @@
 ﻿using ProjectsHub.Core;
 using ProjectsHub.Model;
+using ProjectsHub.Exceptions;
 
 namespace ProjectsHub.API.Services
 {
@@ -29,9 +30,20 @@ namespace ProjectsHub.API.Services
             };
             return await _postRepository.CreateAsync(createPost);
         }
-        public async Task<Post> GetPost(string id)
+
+        public async Task DeletePost(string postId, string userId)
         {
-            return await _postRepository.GetAsync(id);
+            var post = await _postRepository.GetAsync(postId);
+            if (post.AuthorId != userId) 
+            {
+                throw new UserDoesNotHavePermissionException();
+            }
+            _postRepository.RemoveAsync(postId);
         }
+            
+
+        public async Task<Post> GetPost(string id) =>
+            await _postRepository.GetAsync(id);
+       
     }
 }

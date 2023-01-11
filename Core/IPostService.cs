@@ -6,5 +6,6 @@ namespace ProjectsHub.Core
     {
         public Task<Post> CreatePost(CreatePostDto post, string userId);
         public Task<Post> GetPost(string id);
+        public Task DeletePost(string PostId, string userId);
     }
 }

@@ -48,7 +48,7 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Post>> GetPost(string id)
         {
             try
@@ -56,10 +56,28 @@ namespace ProjectsHub.API.Controllers
                 var post = await _postService.GetPost(id);
                 return (post);
             }
-            catch(ArgumentNullException)
+            catch(Exception)
             {
                 return NotFound();
             }
+        }
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeletePost(string id)
+        {
+            try
+            {
+                await _postService.DeletePost(id, _userToken.GetUserIdFromToken().ToString());
+            }
+            catch(UserDoesNotHavePermissionException)
+            {
+                return Unauthorized();
+            }
+            catch (Exception)
+            {
+                StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return Ok();
         }
     }
 }
