@@ -14,36 +14,31 @@ namespace ProjectsHub.API.Services
             this._userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        public async Task<Post> CreatePost(CreatePostDto post, string userId)
+        public async Task<ReturnPostDto> CreatePost(CreatePostDto post, string userId)
         {
             //if doesnot exist throw exception 
             _userService.GetUserProfileById(Guid.Parse(userId));
-            Post createPost = new Post
-            {
-                AuthorId = userId,
-                PostChunks = post.PostChunks,
-                Comments = new List<Comment>(),
-                CoverPicture = post.CoverPicture,
-                CreatedDate = System.DateTime.Now,
-                Title = post.Title,
-                UsersWhoLiked = new List<string>()
-            };
+            ReturnPostDto createPost = new ReturnPostDto();
+            createPost.FromCreatePostDto(post);
+            createPost.AuthorId = userId;
             return await _postRepository.CreateAsync(createPost);
         }
 
         public async Task DeletePost(string postId, string userId)
         {
             var post = await _postRepository.GetAsync(postId);
-            if (post.AuthorId != userId) 
+            if (post.AuthorId != userId)
             {
                 throw new UserDoesNotHavePermissionException();
             }
             _postRepository.RemoveAsync(postId);
         }
-            
 
-        public async Task<Post> GetPost(string id) =>
-            await _postRepository.GetAsync(id);
-       
+
+        public async Task<PostReturnDto> GetPost(string id)
+        {
+            var post = await _postRepository.GetAsync(id);
+            return post.ToPostReturnDto();
+        }
     }
 }

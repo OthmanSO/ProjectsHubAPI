@@ -1,4 +1,8 @@
-﻿using ProjectsHub.Model;
+﻿using System.Collections;
+using System.Linq;
+using System.Text;
+using ProjectsHub.Model;
+using System.Security.Cryptography;
 
 namespace ProjectsHub.Data
 {
@@ -8,7 +12,7 @@ namespace ProjectsHub.Data
 
         public void setProfilePic(Guid userId, string encodedProfilePic)
         {
-            var userAccount = GetUserAccountByID(userId);
+            var userAccount = GetUserAccountByID(userId);   
             userAccount.ProfilePicture = encodedProfilePic;
         }
 
@@ -44,7 +48,7 @@ namespace ProjectsHub.Data
 
         public void AddContact(Guid userId, Guid contactId)
         {
-            var user1 = GetUserAccountByID(userId);
+            var user1 = GetUserAccountByID(userId); 
             var user2 = GetUserAccountByID(contactId);
 
             if (user1.Contacts == null)
@@ -85,7 +89,7 @@ namespace ProjectsHub.Data
             return _Id;
         }
 
-        public UserAccountProfileDto GetUserById(Guid userId)
+        public UserAccountProfileDto GetUserById (Guid userId) 
         {
             List<Guid> lastFivePosts = new List<Guid>();
             List<Guid> lastFiveProjects = new List<Guid>();

@@ -49,7 +49,7 @@ namespace ProjectsHub.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Post>> GetPost(string id)
+        public async Task<ActionResult<PostReturnDto>> GetPost(string id)
         {
             try
             {

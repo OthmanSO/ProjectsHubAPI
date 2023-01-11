@@ -4,8 +4,8 @@ namespace ProjectsHub.Core
 {
     public interface IPostService
     {
-        public Task<Post> CreatePost(CreatePostDto post, string userId);
-        public Task<Post> GetPost(string id);
+        public Task<ReturnPostDto> CreatePost(CreatePostDto post, string userId);
+        public Task<PostReturnDto> GetPost(string id);
         public Task DeletePost(string PostId, string userId);
     }
 }
