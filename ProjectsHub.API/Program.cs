@@ -6,6 +6,8 @@ using ProjectsHub.Core;
 using ProjectsHub.Data;
 using ProjectsHub.Model;
 using System.Text;
+using ProjectsHub.Core;
+using ProjectsHub.API.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
     };
 });
+
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<UserRepository>();

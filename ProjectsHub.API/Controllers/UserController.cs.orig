@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProjectsHub.API.Services;
-using ProjectsHub.Core;
-using ProjectsHub.Exceptions;
 using ProjectsHub.Model;
+using ProjectsHub.API.Exceptions;
+using Microsoft.AspNetCore.Authorization;
+using ProjectsHub.API.Model;
+using Microsoft.IdentityModel.Tokens;
+using ProjectsHub.Core;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -34,8 +35,9 @@ namespace ProjectsHub.API.Controllers
             {
                 var userId = _UserService.CreateUser(user);
                 var userName = $"{user.FirstName} {user.LastName}";
-                var tokenString = _userToken.CreateUserToken(userId, userName, user.Email);
+                var tokenString = _userToken.CreateUserToken(userId , userName, user.Email );
                 return Created(userId.ToString(), tokenString);
+
             }
             catch (UserAlreadyExistException ex)
             {
@@ -81,7 +83,8 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
+<<<<<<< HEAD
+                _UserService.ChangeProfilePic(Guid.Parse(id), ProfilePic.EncodedProfilePicture);
                 return Ok();
             }
             catch (Exception e)
@@ -103,13 +106,50 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                _UserService.ChangeUserBio(id, UserBio.bio);
+                _UserService.ChangeUserBio(id, UserBio.bio); 
                 return Ok();
+=======
+                _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
             catch (Exception e)
             {
                 return NotFound("User not found");
             }
+            return Ok();
+        }
+
+        [Authorize]
+<<<<<<< HEAD
+        [HttpPut("Password")]
+        public async Task<IActionResult> ChangePassword([FromBody] PasswordUpdateDto userPasswords)
+        {
+            if (userPasswords.OldPassword.IsNullOrEmpty() || userPasswords.NewPassword.IsNullOrEmpty())
+=======
+        [HttpPut("bio")]
+        public async Task<IActionResult> ChangeBio([FromBody] BioDto UserBio)
+        {
+            if (UserBio.bio.IsNullOrEmpty())
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
+            {
+                return BadRequest();
+            }
+
+            var id = _userToken.GetUserIdFromToken();
+
+            try
+            {
+<<<<<<< HEAD
+                _UserService.ChangeUserPassword(id, userPasswords);
+                return Ok();
+=======
+                _UserService.ChangeUserBio(id, UserBio.bio);
+            }
+            catch (Exception e)
+            {
+                return NotFound("User not found");
+            }
+            return Ok();
         }
 
         [Authorize]
@@ -126,7 +166,7 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeUserPassword(id, userPasswords);
-                return Ok();
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
             catch (UserPasswordNotMatchedException e)
             {
@@ -142,7 +182,7 @@ namespace ProjectsHub.API.Controllers
         [HttpPut("username")]
         public async Task<IActionResult> ChangeUsername([FromBody] UserNameDto UserName)
         {
-            if (UserName.FirstName.IsNullOrEmpty() || UserName.LastName.IsNullOrEmpty())
+            if (UserName.FirstName.IsNullOrEmpty() || UserName.LastName.IsNullOrEmpty() )
             {
                 return BadRequest();
             }
@@ -150,7 +190,10 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.ChangeUserName(id, UserName);
+<<<<<<< HEAD
                 return Ok();
+=======
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
             catch (Exception e)
             {
@@ -170,16 +213,27 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.AddContact(id, Guid.Parse(Contact.ContactId));
+<<<<<<< HEAD
                 return Ok();
+=======
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
             catch (FormatException e)
             {
                 return BadRequest();
             }
-            catch (Exception e)
+            catch (ArgumentNullException e)
             {
                 return NotFound("User not found");
             }
+            catch (InvalidOperationException e)
+            {
+                return NotFound("user Not Found");
+            }
+<<<<<<< HEAD
+=======
+            return Ok();
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
         }
 
         [Authorize]
@@ -194,7 +248,10 @@ namespace ProjectsHub.API.Controllers
             try
             {
                 _UserService.DeleteContact(id, Guid.Parse(Contact.ContactId));
+<<<<<<< HEAD
                 return Ok();
+=======
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
             }
             catch (FormatException e)
             {
@@ -204,97 +261,30 @@ namespace ProjectsHub.API.Controllers
             {
                 return Ok();
             }
-        }
-
-        [Authorize]
-        [HttpGet("Followers")]
-        [HttpGet("Followers/{userId}")]
-        public async Task<IActionResult> GetUserFollowers(string userId)
-        {
-            Guid id;
-            try
-            {
-                if (!userId.IsNullOrEmpty())
-                {
-                    id = Guid.Parse(userId);
-                }
-                else
-                {
-                    id = _userToken.GetUserIdFromToken();
-                }
-            }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
-                return Ok(listOfUsersFollowingUserAccount);
-            }
-            catch (Exception e)
-            {
-                return NotFound("user Not Found");
-            }
-        }
-
-        [Authorize]
-        [HttpGet("Following")]
-        [HttpGet("Following/{userId}")]
-        public async Task<IActionResult> GetUserFollowing(string? userId)
-        {
-            Guid id;
-            try
-            {
-                if (!userId.IsNullOrEmpty())
-                {
-                    id = Guid.Parse(userId);
-                }
-                else
-                {
-                    id = _userToken.GetUserIdFromToken();
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var listOfUsersThatUserAccountFollow = _UserService.GetListOfFollwing(id);
-                return Ok(listOfUsersThatUserAccountFollow);
-            }
-            catch (Exception e)
-            {
-                return NotFound("user Not Found");
-            }
+<<<<<<< HEAD
         }
 
 
+=======
+            return Ok();
+        }
 
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
         [Authorize]
         [HttpGet("Contacts")]
-        [HttpGet("Contacts/{id}")]
-        public async Task<IActionResult> UserContacts(string id)
+        public async Task<IActionResult> UserContacts()
         {
-            Guid userId;   
-            if (id == null)
-            {
-                userId = _userToken.GetUserIdFromToken();
-            }
-            else
-            {
-                userId = Guid.Parse(id);
-            }
+            var id = _userToken.GetUserIdFromToken();
 
-            if (userId == Guid.Empty)
-            {
-                return BadRequest("Log in or include user identifier first");
-            }
             try
             {
-                var Contacts = _UserService.GetUserContacts(userId);
-                return Ok(Contacts);
+                var Contacts = _UserService.GetUserContacts(id);
+                List<IdDto> ContactsList = new List<IdDto>();
+                foreach (var Contact in Contacts)
+                {
+                    ContactsList.Add(new IdDto { Id = Contact });
+                }
+                return Ok(ContactsList);
             }
             catch (ArgumentNullException e)
             {
@@ -305,8 +295,13 @@ namespace ProjectsHub.API.Controllers
                 return NotFound("user Not Found");
             }
         }
+<<<<<<< HEAD
 
+        [Authorize]
+=======
+        [Authorize]
         [HttpGet()]
+>>>>>>> 94d8143a237cff9b1bbd85babc2547a0f2f3b3eb
         [HttpGet("{id}")]
         public async Task<IActionResult> userProfile(string? id)
         {
@@ -355,62 +350,6 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-        }
-
-        [Authorize]
-        [HttpPut("Follow/{followUserId}")]
-        public async Task<IActionResult> FollowUser(string followUserId)
-        {
-            if (followUserId.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
-            var id = _userToken.GetUserIdFromToken();
-            try
-            {
-                _UserService.FollowUser(id, Guid.Parse(followUserId));
-            }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound("User not found");
-            }
-            catch (InvalidOperationException e)
-            {
-                return NotFound("user Not Found");
-            }
-            return Ok();
-        }
-
-        [Authorize]
-        [HttpPut("Unfollow/{unfollowUserId}")]
-        public async Task<IActionResult> UnfollowUser(string unfollowUserId)
-        {
-            if (unfollowUserId.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
-            var id = _userToken.GetUserIdFromToken();
-            try
-            {
-                _UserService.UnfollowUser(id, Guid.Parse(unfollowUserId));
-            }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound("User not found");
-            }
-            catch (InvalidOperationException e)
-            {
-                return NotFound("user Not Found");
-            }
-            return Ok();
         }
     }
 }
