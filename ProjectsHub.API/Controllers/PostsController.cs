@@ -19,7 +19,7 @@ namespace ProjectsHub.API.Controllers
             this._postService = postService ?? throw new ArgumentNullException(nameof(postService));
         }
 
-        [Authorize]
+
         [HttpPost()]
         public async Task<ActionResult> PostingAPost([FromBody] CreatePostDto post)
         {
@@ -61,7 +61,8 @@ namespace ProjectsHub.API.Controllers
                 return NotFound();
             }
         }
-        [Authorize]
+
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePost(string id)
         {
