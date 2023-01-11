@@ -1,4 +1,4 @@
-﻿namespace ProjectsHub.API.Model
+﻿namespace ProjectsHub.Model
 {
     public class UserprofilePictureDto
     {

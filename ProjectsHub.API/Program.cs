@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using ProjectsHub.API.Controllers;
 using ProjectsHub.API.Services;
+using ProjectsHub.Core;
 using ProjectsHub.Data;
+using ProjectsHub.Model;
 using System.Text;
 using ProjectsHub.Core;
 using ProjectsHub.API.Controllers;
@@ -34,12 +37,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-builder.Services.AddAuthorization();
-
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<UserRepository>();
-builder.Services.AddScoped<IUserToken,UserToken>();
+builder.Services.AddScoped<IUserToken, UserToken>();
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.Configure<PostDBOptions>(
+    builder.Configuration.GetSection("MongoDB"));
+builder.Services.AddPostReopsitory();
 
 var app = builder.Build();
 

@@ -89,7 +89,7 @@ namespace ProjectsHub.Data
             return _Id;
         }
 
-        public UserAccountProfileDto GetUserById(Guid userId)
+        public UserAccountProfileDto GetUserById (Guid userId) 
         {
             List<Guid> lastFivePosts = new List<Guid>();
             List<Guid> lastFiveProjects = new List<Guid>();
@@ -129,6 +129,57 @@ namespace ProjectsHub.Data
                 Posts = lastFivePosts,
                 Projects = lastFiveProjects
             };
+        }
+
+        public List<Guid> GetGetListOfFollwing(Guid userId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Following == null)
+                user.Following = new List<Guid>();
+            return user.Following;
+        }
+
+        public List<Guid> GetGetListOfFollwers(Guid userId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Followers == null)
+                user.Followers = new List<Guid>();
+            return user.Followers;
+        }
+
+        public void UnfollowUser(Guid userId, Guid unfollowUserId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Following != null)
+            {
+                user.Following.Remove(unfollowUserId);
+            }
+            var UnfollowedUser = GetUserAccountByID(unfollowUserId);
+            if (UnfollowedUser.Followers != null)
+            {
+                UnfollowedUser.Followers.Remove(userId);
+            }
+        }
+
+        public void FollowUser(Guid userId, Guid unfollowUserId)
+        {
+            var user = GetUserAccountByID(userId);
+            var FollowedUser = GetUserAccountByID(unfollowUserId);
+
+            if (user.Following == null)
+                user.Following = new List<Guid>();
+
+            if (FollowedUser.Followers == null)
+                FollowedUser.Followers = new List<Guid>();
+
+            if (!user.Following.Any(x => x.Equals(unfollowUserId)))
+            {
+                user.Following.Add(unfollowUserId);
+            }
+            if (!FollowedUser.Followers.Any(x => x.Equals(userId)))
+            {
+                FollowedUser.Followers.Add(userId);
+            }
         }
     }
 }

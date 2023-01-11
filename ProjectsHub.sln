@@ -23,6 +23,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsHub.Model", "ProjectsHub.Model\ProjectsHub.Model.csproj", "{755BCC70-1A0C-41CB-9601-AE6144E9FE15}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsHub.Core", "Core\ProjectsHub.Core.csproj", "{59F53116-98D9-4C7D-8517-DAE60B72AC12}"
+<<<<<<< HEAD
+	ProjectSection(ProjectDependencies) = postProject
+		{755BCC70-1A0C-41CB-9601-AE6144E9FE15} = {755BCC70-1A0C-41CB-9601-AE6144E9FE15}
+	EndProjectSection
+=======
+>>>>>>> 011f4fe68d2b52388d7d6c22d654a754e1bdd676
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

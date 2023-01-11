@@ -1,6 +1,6 @@
 ﻿using ProjectsHub.Data;
 using ProjectsHub.Model;
-using ProjectsHub.API.Exceptions;
+using ProjectsHub.Exceptions;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -76,7 +76,6 @@ namespace ProjectsHub.API.Services
             }
             throw new UserPasswordNotMatchedException();
         }
-
         internal void AddContact(Guid userId, Guid contactId)
         {
             _userRepository.AddContact(userId, contactId);
@@ -97,6 +96,34 @@ namespace ProjectsHub.API.Services
             var user = _userRepository.GetUserById(userId);
             var userShortProfile = new UserShortProfileDto { _id = user._Id, FirstName = user.FirstName, LastName = user.LastName, ProfilePic = user.ProfilePicture };
             return userShortProfile;
+        }
+
+        internal void FollowUser(Guid userId, Guid followUserId)
+        {
+            //check if exist
+            var loggedinUser = _userRepository.GetUserById(userId);
+            var followUser = _userRepository.GetUserById(followUserId);
+
+            _userRepository.FollowUser(userId, followUserId);
+        }
+
+        internal void UnfollowUser(Guid userId, Guid unfollowUserId)
+        {
+            //check if exist
+            var loggedinUser = _userRepository.GetUserById(userId);
+            var followUser = _userRepository.GetUserById(unfollowUserId);
+
+            _userRepository.UnfollowUser(userId, unfollowUserId);
+        }
+
+        internal List<Guid> GetListOfFollwers(Guid userId)
+        {
+            return _userRepository.GetGetListOfFollwers(userId);
+        }
+
+        internal object GetListOfFollwing(Guid userId)
+        {
+            return _userRepository.GetGetListOfFollwing(userId);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace ProjectsHub.API
+namespace ProjectsHub.Exceptions
 {
     [Serializable]
     public class UserNotLoggedInException : Exception
