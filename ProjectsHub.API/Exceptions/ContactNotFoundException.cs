@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace ProjectsHub.Model
+namespace ProjectsHub.Exceptions
 {
     [Serializable]
     public class ContactNotFoundException : Exception

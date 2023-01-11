@@ -10,74 +10,22 @@ namespace ProjectsHub.Data
     {
         private List<UserAccount> UsersList = new List<UserAccount>();
 
-        public void CreateList()
-        {
-            UsersList.Add(new UserAccount
-            {
-                _Id = Guid.NewGuid(),
-                FirstName = "Othman",
-                LastName = "Othman",
-                Email = "othman@gmail.com",
-                Password = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-                ProfilePicture = "",
-                Posts = new List<Guid>(),
-                Projects = new List<Guid>(),
-                Bio = "",
-                Followers = new List<Guid>(),
-                Following = new List<Guid>()
-            });
-            UsersList.Add(new UserAccount
-            {
-                _Id = Guid.NewGuid(),
-                FirstName = "Noor",
-                LastName = "Braik",
-                Email = "noor@gmail.com",
-                Password = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-                ProfilePicture = "",
-                Posts = new List<Guid>(),
-                Projects = new List<Guid>(),
-                Bio = "",
-                Followers = new List<Guid>(),
-                Following = new List<Guid>()
-            });
-            UsersList.Add(new UserAccount
-            {
-                _Id = Guid.NewGuid(),
-                FirstName = "Tariq",
-                LastName = "Sabri",
-                Email = "tariq@gmail.com",
-                Password = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-                ProfilePicture = "",
-                Posts = new List<Guid>(),
-                Projects = new List<Guid>(),
-                Bio = "",
-                Followers = new List<Guid>(),
-                Following = new List<Guid>()
-            });
-        }
-
         public void setProfilePic(Guid userId, string encodedProfilePic)
         {
-            var userAccount = (from User in UsersList
-                               where User._Id == userId
-                               select User).First();
+            var userAccount = GetUserAccountByID(userId);   
             userAccount.ProfilePicture = encodedProfilePic;
         }
 
         public void setUserName(Guid userId, UserNameDto newUserName)
         {
-            var userAccount = (from User in UsersList
-                               where User._Id == userId
-                               select User).First();
+            var userAccount = GetUserAccountByID(userId);
             userAccount.FirstName = newUserName.FirstName;
             userAccount.LastName = newUserName.LastName;
         }
 
         public void SetUserPassword(Guid userId, string password)
         {
-            var userAccount = (from User in UsersList
-                               where User._Id == userId
-                               select User).First();
+            var userAccount = GetUserAccountByID(userId);
             userAccount.Password = password;
         }
 
@@ -88,29 +36,20 @@ namespace ProjectsHub.Data
 
         public IEnumerable<Guid> GetUserContacts(Guid userId)
         {
-            var user = (from User in UsersList
-                        where User._Id == userId
-                        select User).First();
+            var user = GetUserAccountByID(userId);
             return user.Contacts != null ? user.Contacts : new List<Guid>();
         }
 
         public void DeleteContact(Guid userId, Guid contactId)
         {
-            var usr = (from User in UsersList
-                       where User._Id == userId
-                       select User).First();
+            var usr = GetUserAccountByID(userId);
             usr.Contacts.Remove(contactId);
         }
 
         public void AddContact(Guid userId, Guid contactId)
         {
-            var user1 = (from User in UsersList
-                         where User._Id == userId
-                         select User).First();
-
-            var user2 = (from User in UsersList
-                         where User._Id == contactId
-                         select User).First();
+            var user1 = GetUserAccountByID(userId); 
+            var user2 = GetUserAccountByID(contactId);
 
             if (user1.Contacts == null)
                 user1.Contacts = new List<Guid>();
@@ -131,13 +70,11 @@ namespace ProjectsHub.Data
 
         public void setUserBio(Guid userId, String Bio)
         {
-            var userAccount = (from User in UsersList
-                               where User._Id == userId
-                               select User).First();
+            var userAccount = GetUserAccountByID(userId);
             userAccount.Bio = Bio;
         }
 
-        public UserAccount? GetUserByEmail(String Email)
+        public UserAccount GetUserByEmail(String Email)
         {
             return (from userAccount in UsersList
                     where userAccount.Email == Email
@@ -152,7 +89,7 @@ namespace ProjectsHub.Data
             return _Id;
         }
 
-        public UserAccountProfileDto GetUserById(Guid userId)
+        public UserAccountProfileDto GetUserById (Guid userId) 
         {
             List<Guid> lastFivePosts = new List<Guid>();
             List<Guid> lastFiveProjects = new List<Guid>();
@@ -192,6 +129,57 @@ namespace ProjectsHub.Data
                 Posts = lastFivePosts,
                 Projects = lastFiveProjects
             };
+        }
+
+        public List<Guid> GetGetListOfFollwing(Guid userId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Following == null)
+                user.Following = new List<Guid>();
+            return user.Following;
+        }
+
+        public List<Guid> GetGetListOfFollwers(Guid userId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Followers == null)
+                user.Followers = new List<Guid>();
+            return user.Followers;
+        }
+
+        public void UnfollowUser(Guid userId, Guid unfollowUserId)
+        {
+            var user = GetUserAccountByID(userId);
+            if (user.Following != null)
+            {
+                user.Following.Remove(unfollowUserId);
+            }
+            var UnfollowedUser = GetUserAccountByID(unfollowUserId);
+            if (UnfollowedUser.Followers != null)
+            {
+                UnfollowedUser.Followers.Remove(userId);
+            }
+        }
+
+        public void FollowUser(Guid userId, Guid unfollowUserId)
+        {
+            var user = GetUserAccountByID(userId);
+            var FollowedUser = GetUserAccountByID(unfollowUserId);
+
+            if (user.Following == null)
+                user.Following = new List<Guid>();
+
+            if (FollowedUser.Followers == null)
+                FollowedUser.Followers = new List<Guid>();
+
+            if (!user.Following.Any(x => x.Equals(unfollowUserId)))
+            {
+                user.Following.Add(unfollowUserId);
+            }
+            if (!FollowedUser.Followers.Any(x => x.Equals(userId)))
+            {
+                FollowedUser.Followers.Add(userId);
+            }
         }
     }
 }
