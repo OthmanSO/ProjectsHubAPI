@@ -1,6 +1,6 @@
 ﻿using ProjectsHub.Data;
 using ProjectsHub.Model;
-using ProjectsHub.API.Exceptions;
+using ProjectsHub.Exceptions;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -104,7 +104,7 @@ namespace ProjectsHub.API.Services
             var loggedinUser = _userRepository.GetUserById(userId);
             var followUser = _userRepository.GetUserById(followUserId);
 
-            _userRepository.FollowUser(userId, followUserId); 
+            _userRepository.FollowUser(userId, followUserId);
         }
 
         internal void UnfollowUser(Guid userId, Guid unfollowUserId)

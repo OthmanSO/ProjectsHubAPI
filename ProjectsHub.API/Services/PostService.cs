@@ -17,7 +17,8 @@ namespace ProjectsHub.API.Services
         {
             //if doesnot exist throw exception 
             _userService.GetUserProfileById(Guid.Parse(userId));
-            Post createPost = new Post {
+            Post createPost = new Post
+            {
                 AuthorId = userId,
                 PostChunks = post.PostChunks,
                 Comments = new List<Comment>(),
@@ -27,6 +28,10 @@ namespace ProjectsHub.API.Services
                 UsersWhoLiked = new List<string>()
             };
             return await _postRepository.CreateAsync(createPost);
+        }
+        public async Task<Post> GetPost(string id)
+        {
+            return await _postRepository.GetAsync(id);
         }
     }
 }

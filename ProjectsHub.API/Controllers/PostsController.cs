@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProjectsHub.API.Services;
-using ProjectsHub.Model;
-using ProjectsHub.API.Exceptions;
-using Microsoft.AspNetCore.Authorization;
-using ProjectsHub.API.Model;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectsHub.Core;
+using ProjectsHub.Exceptions;
+using ProjectsHub.Model;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -15,7 +13,7 @@ namespace ProjectsHub.API.Controllers
         private readonly IUserToken _userToken;
         private readonly IPostService _postService;
 
-        public PostsController (IUserToken userToken, IPostService postService)
+        public PostsController(IUserToken userToken, IPostService postService)
         {
             this._userToken = userToken ?? throw new ArgumentNullException(nameof(userToken));
             this._postService = postService ?? throw new ArgumentNullException(nameof(postService));
@@ -25,8 +23,12 @@ namespace ProjectsHub.API.Controllers
         [HttpPost()]
         public async Task<ActionResult> PostingAPost([FromBody] CreatePostDto post)
         {
-            //assert post 
-            if (post.Title == null || post.CoverPicture == null)
+            try
+            {
+                post.RemoveEmpyChunks();
+                post.CleanPost();
+            }
+            catch (PostArssertionFailedException)
             {
                 return BadRequest();
             }
@@ -43,6 +45,20 @@ namespace ProjectsHub.API.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+            }
+        }
+
+        [HttpPost("{id}")]
+        public async Task<ActionResult<Post>> GetPost(string id)
+        {
+            try
+            {
+                var post = await _postService.GetPost(id);
+                return (post);
+            }
+            catch(ArgumentNullException)
+            {
+                return NotFound();
             }
         }
     }

@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using ProjectsHub.API.Services;
-using ProjectsHub.Data;
-using System.Text;
-using ProjectsHub.Core;
-using ProjectsHub.Model;
 using ProjectsHub.API.Controllers;
+using ProjectsHub.API.Services;
+using ProjectsHub.Core;
+using ProjectsHub.Data;
+using ProjectsHub.Model;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace ProjectsHub.API.Exceptions
+namespace ProjectsHub.Exceptions
 {
     [Serializable]
     internal class UserAlreadyExistException : Exception

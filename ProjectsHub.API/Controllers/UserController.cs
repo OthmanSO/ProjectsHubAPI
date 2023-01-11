@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProjectsHub.API.Services;
-using ProjectsHub.Model;
-using ProjectsHub.API.Exceptions;
-using Microsoft.AspNetCore.Authorization;
-using ProjectsHub.API.Model;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using ProjectsHub.API.Model;
+using ProjectsHub.API.Services;
 using ProjectsHub.Core;
+using ProjectsHub.Exceptions;
+using ProjectsHub.Model;
 
 namespace ProjectsHub.API.Controllers
 {

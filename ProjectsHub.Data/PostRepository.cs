@@ -1,7 +1,7 @@
-﻿using ProjectsHub.Core;
+﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using ProjectsHub.Core;
 using ProjectsHub.Model;
-using Microsoft.Extensions.Options;
 
 
 namespace ProjectsHub.Data

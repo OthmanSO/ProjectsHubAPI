@@ -1,8 +1,9 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+﻿using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.Core;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using ProjectsHub.Exceptions;
+using System.Text;
 
 namespace ProjectsHub.API.Controllers
 {
