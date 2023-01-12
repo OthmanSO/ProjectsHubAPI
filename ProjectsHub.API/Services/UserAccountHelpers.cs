@@ -34,8 +34,8 @@ namespace ProjectsHub.API.Services
                 Bio = userAccount.Bio,
                 Followers = userAccount.Followers.Count,
                 Following = userAccount.Following.Count,
-                Posts = userAccount.Posts.Take(5),
-                Projects = userAccount.Projects.Take(5)
+                Posts = userAccount.Posts != null ? userAccount.Posts.Take(5) : new List<string>(),
+                Projects = userAccount.Projects != null ? userAccount.Projects.Take(5) : new List<string>()
             };
         }
     }

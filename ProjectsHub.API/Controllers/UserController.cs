@@ -49,9 +49,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -75,9 +75,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User Not Found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -101,9 +101,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User not found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -127,9 +127,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User not found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -157,9 +157,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User Not Found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -181,9 +181,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User not found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -205,9 +205,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -229,9 +229,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -251,9 +251,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -273,9 +273,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -296,19 +296,19 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-            catch (InvalidOperationException)
+            catch (Exception e)
             {
-                return NotFound("user Not Found");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
         [HttpGet()]
         [HttpGet("{id}")]
         public async Task<IActionResult> userProfile(string? userId)
-        {
-            var id = _userToken.GetUserIdFromToken();
+        {   
             try
             {
+                var id = _userToken.GetUserIdFromToken();
                 var userProfile = await _UserService.GetUserProfileById(id);
                 return Ok(userProfile);
             }
@@ -316,9 +316,13 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return Unauthorized("user Not Logged in");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -334,9 +338,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -354,9 +358,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User not found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -374,9 +378,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("User not found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
     }
