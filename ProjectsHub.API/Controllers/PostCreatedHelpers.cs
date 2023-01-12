@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.Exceptions;
 using ProjectsHub.Model;
+using System.Text.RegularExpressions;
 
 namespace ProjectsHub.API.Controllers
 {

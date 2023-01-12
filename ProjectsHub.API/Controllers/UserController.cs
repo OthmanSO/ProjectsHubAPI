@@ -37,6 +37,10 @@ namespace ProjectsHub.API.Controllers
                 var tokenString = _userToken.CreateUserToken(CreatedUser._Id, userName, CreatedUser.Email);
                 return Created(CreatedUser._Id, tokenString);
             }
+            catch(BadEmailException) 
+            {
+                return BadRequest("Invalid Email");
+            }
             catch (UserAlreadyExistException)
             {
                 return Conflict("User Already Exists");

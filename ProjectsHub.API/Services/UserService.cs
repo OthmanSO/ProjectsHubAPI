@@ -1,6 +1,7 @@
 ﻿using ProjectsHub.Core;
 using ProjectsHub.Model;
 using ProjectsHub.Exceptions;
+using ProjectsHub.API.Controllers;
 
 namespace ProjectsHub.API.Services
 {
@@ -18,9 +19,13 @@ namespace ProjectsHub.API.Services
                 return user;
             throw new UserPasswordNotMatchedException();
         }
-
+        
         public async Task<UserAccount> CreateUser(UserAccountCreate user)
         {
+            if (!user.IsValidEmail())
+            {
+                throw new BadEmailException();
+            }
             var userAlreadyExist = await _userRepository.GetByEmailAsync(user.Email.ToLower());
             if (userAlreadyExist != null)
             {
