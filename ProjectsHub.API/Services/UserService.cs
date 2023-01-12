@@ -15,7 +15,8 @@ namespace ProjectsHub.API.Services
         public async Task<UserAccount> GetLoggedInUser(string Email, string Password)
         {
             var user = await _userRepository.GetByEmailAsync(Email.ToLower());
-            if (Password.ComputePasswordHash().Equals(user.Password))
+            var EncodedPassword = Password.ComputePasswordHash();
+            if (EncodedPassword.Equals(user.Password))
                 return user;
             throw new UserPasswordNotMatchedException();
         }

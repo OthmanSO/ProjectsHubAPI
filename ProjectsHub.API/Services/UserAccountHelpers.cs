@@ -10,7 +10,7 @@ namespace ProjectsHub.API.Services
         {
             userAccount.FirstName = createUserAccount.FirstName;
             userAccount.LastName = createUserAccount.LastName;
-            userAccount.Email = createUserAccount.Email;
+            userAccount.Email = createUserAccount.Email.ToLower();
             userAccount.Password = createUserAccount.Password.ComputePasswordHash();
             userAccount.ProfilePicture = createUserAccount.ProfilePicture;
         }

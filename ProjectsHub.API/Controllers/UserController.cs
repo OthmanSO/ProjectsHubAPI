@@ -45,7 +45,7 @@ namespace ProjectsHub.API.Controllers
             {
                 return Conflict("User Already Exists");
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound();
             }
@@ -71,7 +71,7 @@ namespace ProjectsHub.API.Controllers
             {
                 return BadRequest("Password Mismatch");
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("User Not Found");
             }
@@ -97,7 +97,7 @@ namespace ProjectsHub.API.Controllers
                 await _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
                 return Ok();
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("User not found");
             }
@@ -123,7 +123,7 @@ namespace ProjectsHub.API.Controllers
                 await _UserService.ChangeUserBio(id, UserBio.bio);
                 return Ok();
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("User not found");
             }
@@ -152,8 +152,8 @@ namespace ProjectsHub.API.Controllers
             catch (UserPasswordNotMatchedException)
             {
                 return Unauthorized("Old Password Mismatch");
-            }
-            catch (ArgumentNullException)
+            }   
+            catch (NullReferenceException)
             {
                 return NotFound("User Not Found");
             }
@@ -177,7 +177,7 @@ namespace ProjectsHub.API.Controllers
                 await _UserService.ChangeUserName(id, UserName);
                 return Ok();
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("User not found");
             }
@@ -201,9 +201,13 @@ namespace ProjectsHub.API.Controllers
                 await _UserService.AddContact(id, Contact.ContactId);
                 return Ok();
             }
+            catch (NullReferenceException)
+            {
+                return NotFound("user Not Found");
+            }
             catch (Exception)
             {
-                return NotFound("User not found");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
             }
         }
 
@@ -221,7 +225,7 @@ namespace ProjectsHub.API.Controllers
                 await _UserService.DeleteContact(id, Contact.ContactId);
                 return Ok();
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return Ok();
             }
@@ -243,7 +247,7 @@ namespace ProjectsHub.API.Controllers
                 var listOfUsersFollowingUserAccount = await _UserService.GetListOfFollwers(id);
                 return Ok(listOfUsersFollowingUserAccount);
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
             }
@@ -265,7 +269,7 @@ namespace ProjectsHub.API.Controllers
                 var listOfUsersThatUserAccountFollow = await _UserService.GetListOfFollwing(id);
                 return Ok(listOfUsersThatUserAccountFollow);
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
             }
@@ -288,11 +292,11 @@ namespace ProjectsHub.API.Controllers
                 var Contacts = await _UserService.GetUserContacts(userId);
                 return Ok(Contacts);
             }
-            catch (ArgumentNullException e)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 return NotFound("user Not Found");
             }
@@ -308,7 +312,7 @@ namespace ProjectsHub.API.Controllers
                 var userProfile = await _UserService.GetUserProfileById(id);
                 return Ok(userProfile);
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
             }
@@ -326,7 +330,7 @@ namespace ProjectsHub.API.Controllers
                 var userShortProfile = await _UserService.GetUserShortPeofile(id);
                 return Ok(userShortProfile);
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
             }
@@ -346,7 +350,7 @@ namespace ProjectsHub.API.Controllers
                 await _UserService.FollowUser(id, followUserId);
                 return Ok();
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("User not found");
             }
@@ -366,7 +370,7 @@ namespace ProjectsHub.API.Controllers
                 await _UserService.UnfollowUser(id, unfollowUserId);
                 return Ok();
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
                 return NotFound("User not found");
             }
