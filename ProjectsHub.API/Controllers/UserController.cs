@@ -238,7 +238,7 @@ namespace ProjectsHub.API.Controllers
         [Authorize]
         [HttpGet("Followers")]
         [HttpGet("Followers/{userId}")]
-        public async Task<IActionResult> GetUserFollowers(string userId)
+        public async Task<IActionResult> GetUserFollowers(string? userId)
         {
             var id = userId ?? _userToken.GetUserIdFromToken();
 
@@ -284,7 +284,7 @@ namespace ProjectsHub.API.Controllers
         [Authorize]
         [HttpGet("Contacts")]
         [HttpGet("Contacts/{id}")]
-        public async Task<IActionResult> UserContacts(string userId)
+        public async Task<IActionResult> UserContacts(string? userId)
         {
             var id = userId ?? _userToken.GetUserIdFromToken();
             try
