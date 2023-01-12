@@ -5,7 +5,7 @@ namespace ProjectsHub.API.Services
 {
     public static class PostHealpers
     {
-        public static PostReturnDto ToPostReturnDto(this ReturnPostDto post) => new PostReturnDto
+        public static PostReturnDto ToPostReturnDto(this Post post) => new PostReturnDto
         {
             _id = post._id,
             Title = post.Title,
@@ -17,7 +17,7 @@ namespace ProjectsHub.API.Services
             Comments = post.Comments
         };
 
-        public static void FromCreatePostDto(this ReturnPostDto post, CreatePostDto createPost) 
+        public static void FromCreatePostDto(this Post post, CreatePostDto createPost) 
         {
             post.PostChunks = createPost.PostChunks;
             post.Comments = new List<Comment>();
@@ -26,6 +26,14 @@ namespace ProjectsHub.API.Services
             post.Title = createPost.Title;
             post.UsersWhoLiked = new List<string>();
         }
-    }
+        public static UserShortProfileDto ToUserShortProfileDto(this UserAccount user) =>
+            new UserShortProfileDto
+            {
+                _id = user._Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                ProfilePic = user.ProfilePicture
+            };
+}
 }
 

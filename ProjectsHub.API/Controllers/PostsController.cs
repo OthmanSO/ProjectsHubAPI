@@ -38,7 +38,7 @@ namespace ProjectsHub.API.Controllers
                 var CreatedPost = await _postService.CreatePost(post, id.ToString());
                 return Created(CreatedPost._id, CreatedPost);
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
                 return Unauthorized();
             }
@@ -76,7 +76,7 @@ namespace ProjectsHub.API.Controllers
             }
             catch (Exception)
             {
-                StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
             }
             return Ok();
         }

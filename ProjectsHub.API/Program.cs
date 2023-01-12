@@ -39,12 +39,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddSingleton<UserRepository>();
 builder.Services.AddScoped<IUserToken, UserToken>();
 builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.Configure<PostDBOptions>(
+builder.Services.Configure<MongoDBOptions>(
     builder.Configuration.GetSection("MongoDB"));
 builder.Services.AddPostReopsitory();
+builder.Services.AddUserRepository();
 
 var app = builder.Build();
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using ProjectsHub.Core;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,11 +16,11 @@ namespace ProjectsHub.API.Controllers
             _Configuration = _conf ?? throw new ArgumentNullException(nameof(IConfiguration));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(HttpContextAccessor));
         }
-        public string CreateUserToken(Guid userId, string UserName, string Email)
+        public string CreateUserToken(string userId, string UserName, string Email)
         {
             var claims = new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier , userId.ToString() ),
+                    new Claim(ClaimTypes.NameIdentifier , userId ),
                     new Claim(ClaimTypes.GivenName , UserName),
                     new Claim(ClaimTypes.Email, Email)
                 };
@@ -40,10 +40,10 @@ namespace ProjectsHub.API.Controllers
         }
 
 
-        public Guid GetUserIdFromToken()
+        public string GetUserIdFromToken()
         {
-            Guid userId = Guid.Parse(_httpContextAccessor.HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
-            if (userId == Guid.Empty)
+            string userId = _httpContextAccessor.HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
+            if (userId.IsNullOrEmpty())
             {
                 throw new UserNotLoggedInException();
             }
