@@ -15,6 +15,35 @@ namespace ProjectsHub.API.Services
             this._userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
+        public async Task<List<Comment>> CommentOnPost(string userId, string postId, Chunk comment)
+        {
+            var user = await _userService.GetUserProfileById(userId);
+            if (user == null) throw new Exception();
+
+            var post = await _postRepository.GetAsync(postId);
+            if (post == null) throw new Exception();
+
+            post.Comments = post.Comments ?? new List<Comment>();
+
+            int lastComment = post.Comments.GetLastComment();
+
+            Comment createComment = new Comment
+            {
+                Id = lastComment + 1,
+                UserId = userId,
+                Commentchunk = comment,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            post.Comments.Add(createComment);
+
+            await _postRepository.UpdateAsync(postId, post);
+
+            Console.WriteLine($"user {userId} Commented on post {post}, comment Id = {createComment.Id}");
+
+            return post.Comments.OrderBy(c => c.CreatedDate).ToList();
+        }
+
         public async Task<PostReturnDto> CreatePost(CreatePostDto post, string userId)
         {
             //if doesnot exist throw exception 
@@ -27,6 +56,9 @@ namespace ProjectsHub.API.Services
             var createdPost = (await _postRepository.CreateAsync(createPost)).ToPostReturnDto();
 
             await _userService.AddPost(userId, createdPost._id);
+
+            Console.WriteLine($"user {userId} created a post {createdPost._id}");
+
             return createdPost;
         }
 
@@ -39,6 +71,8 @@ namespace ProjectsHub.API.Services
             }
             await _userService.RemovePost(userId, postId);
             await _postRepository.RemoveAsync(postId);
+
+            Console.WriteLine($"user {userId} deleted his post {postId}");
         }
 
 
@@ -55,7 +89,7 @@ namespace ProjectsHub.API.Services
                 throw new Exception();
 
             var post = await _postRepository.GetAsync(postId);
-            if (post== null) throw new Exception();
+            if (post == null) throw new Exception();
 
             if (post.UsersWhoLiked.IsNullOrEmpty())
             {
@@ -64,6 +98,7 @@ namespace ProjectsHub.API.Services
             if (!post.UsersWhoLiked.Any(x => x.Equals(userId)))
             {
                 post.UsersWhoLiked.Add(userId);
+
                 Console.WriteLine($"user {userId} now likes post {postId}");
             }
 
@@ -84,6 +119,7 @@ namespace ProjectsHub.API.Services
                 return;
             }
             post.UsersWhoLiked.Remove(userId);
+
             Console.WriteLine($"user {userId} unliked post {postId}");
 
             await _postRepository.UpdateAsync(postId, post);

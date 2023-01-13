@@ -113,5 +113,20 @@ namespace ProjectsHub.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpPut("{postId}/Comment")]
+        public async Task<IActionResult> CommentOnPost([FromBody] Chunk comment, string postId )
+        {
+            var userId = _userToken.GetUserIdFromToken();
+            try
+            {
+                var comments = await _postService.CommentOnPost(userId, postId, comment);
+                return Ok(comments);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
     }
 }
