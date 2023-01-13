@@ -2,6 +2,7 @@
 using ProjectsHub.Model;
 using ProjectsHub.Exceptions;
 using ProjectsHub.API.Controllers;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ProjectsHub.API.Services
 {
@@ -82,12 +83,12 @@ namespace ProjectsHub.API.Services
             var user1 = await _userRepository.GetAsync(userId);
             var user2 = await _userRepository.GetAsync(contactId);
 
-            if (!user1.Contacts.Any(x => x.Equals(contactId)))
+            if (user1.Contacts.IsNullOrEmpty() || !user1.Contacts.Any(x => x.Equals(contactId)))
             {
                 user1.Contacts.Add(contactId);
             }
 
-            if (!user2.Contacts.Any(x => x.Equals(userId)))
+            if (user2.Contacts.IsNullOrEmpty() || !user2.Contacts.Any(x => x.Equals(userId)))
             {
                 user2.Contacts.Add(userId);
             }
@@ -95,8 +96,11 @@ namespace ProjectsHub.API.Services
             await _userRepository.UpdateAsync(contactId, user2);
         }
 
-        public async Task<List<string>> GetUserContacts(string userId) =>
-            (await _userRepository.GetAsync(userId)).Contacts;
+        public async Task<List<string>> GetUserContacts(string userId)
+        {
+            var user = await _userRepository.GetAsync(userId);
+            return user.Contacts;
+        }
 
         public async Task DeleteContact(string userId, string contactId)
         {
@@ -118,11 +122,11 @@ namespace ProjectsHub.API.Services
             var user = await _userRepository.GetAsync(userId);
             var followedUser = await _userRepository.GetAsync(followUserId);
 
-            if (!user.Following.Any(x => x.Equals(followUserId)))
+            if (user.Following.IsNullOrEmpty() || !user.Following.Any(x => x.Equals(followUserId)))
             {
                 user.Following.Add(followUserId);
             }
-            if (!followedUser.Followers.Any(x => x.Equals(userId)))
+            if (followedUser.Followers.IsNullOrEmpty() || !followedUser.Followers.Any(x => x.Equals(userId)))
             {
                 followedUser.Followers.Add(userId);
             }

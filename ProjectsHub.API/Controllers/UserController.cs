@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using ProjectsHub.API.Services;
 using ProjectsHub.Core;
 using ProjectsHub.Exceptions;
@@ -236,8 +237,8 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
-        [HttpGet("Followers")]
         [HttpGet("Followers/{userId}")]
+        [HttpGet("Followers")]
         public async Task<IActionResult> GetUserFollowers(string? userId)
         {
             var id = userId ?? _userToken.GetUserIdFromToken();
@@ -258,8 +259,8 @@ namespace ProjectsHub.API.Controllers
         }
 
         [Authorize]
-        [HttpGet("Following")]
         [HttpGet("Following/{userId}")]
+        [HttpGet("Following")]
         public async Task<IActionResult> GetUserFollowing(string? userId)
         {
             var id = userId ?? _userToken.GetUserIdFromToken();
@@ -282,8 +283,8 @@ namespace ProjectsHub.API.Controllers
 
 
         [Authorize]
-        [HttpGet("Contacts")]
         [HttpGet("Contacts/{id}")]
+        [HttpGet("Contacts")]
         public async Task<IActionResult> UserContacts(string? userId)
         {
             var id = userId ?? _userToken.GetUserIdFromToken();
@@ -302,13 +303,13 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-        [HttpGet()]
         [HttpGet("{id}")]
+        [HttpGet()]
         public async Task<IActionResult> userProfile(string? userId)
         {   
             try
             {
-                var id = _userToken.GetUserIdFromToken();
+                var id = userId ?? _userToken.GetUserIdFromToken();
                 var userProfile = await _UserService.GetUserProfileById(id);
                 return Ok(userProfile);
             }
@@ -338,9 +339,9 @@ namespace ProjectsHub.API.Controllers
             {
                 return NotFound("user Not Found");
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 

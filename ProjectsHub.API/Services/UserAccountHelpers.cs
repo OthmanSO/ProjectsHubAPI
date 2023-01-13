@@ -13,6 +13,12 @@ namespace ProjectsHub.API.Services
             userAccount.Email = createUserAccount.Email.ToLower();
             userAccount.Password = createUserAccount.Password.ComputePasswordHash();
             userAccount.ProfilePicture = createUserAccount.ProfilePicture;
+            userAccount.Bio = "";
+            userAccount.Contacts = new List<string>();
+            userAccount.Followers= new List<string>();
+            userAccount.Following= new List<string>();
+            userAccount.Projects= new List<string>();
+            userAccount.Posts= new List<string>();
         }
 
         public static string ComputePasswordHash(this String Password)
