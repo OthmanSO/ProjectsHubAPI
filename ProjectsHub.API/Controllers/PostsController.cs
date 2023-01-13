@@ -128,5 +128,24 @@ namespace ProjectsHub.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpDelete("{postId}/Comment/{commentId}")]
+        public async Task<IActionResult> DeleteCommentOnPost(string postId, string commentId)
+        {
+            var userId = _userToken.GetUserIdFromToken();
+            try
+            {
+                var comments = await _postService.DeleteCommentOnPost(userId, postId, int.Parse(commentId));
+                return Ok(comments);
+            }
+            catch(UserDoesNotHavePermissionException)
+            {
+                return Unauthorized();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
     }
 }

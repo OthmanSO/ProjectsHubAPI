@@ -10,5 +10,6 @@ namespace ProjectsHub.Core
         public Task LikePost(string userId, string postId);
         public Task UnLikePost(string userId, string postId);
         public Task<List<Comment>> CommentOnPost(string userId, string postId, Chunk comment);
+        public Task<List<Comment>> DeleteCommentOnPost(string userId, string postId, int commentId);
     }
 }

@@ -62,6 +62,31 @@ namespace ProjectsHub.API.Services
             return createdPost;
         }
 
+        public async Task<List<Comment>> DeleteCommentOnPost(string userId, string postId, int commentId)
+        {
+            var user = await _userService.GetUserProfileById(userId);
+            if (user == null)  
+                throw new Exception();  
+
+            var post = await _postRepository.GetAsync(postId);
+            if (post == null) 
+                throw new Exception();
+
+            var comment = post.Comments.Find(c => c.Id == commentId);
+            if (comment == null) 
+                return new List<Comment>();
+
+            if (userId != comment.UserId)
+                throw new UserDoesNotHavePermissionException();
+
+            post.Comments.Remove(comment);
+
+            _postRepository.UpdateAsync(postId, post);
+
+            Console.WriteLine($"user {userId} removed comment {commentId} on post {postId}");
+            return post.Comments.ToList();
+        }
+
         public async Task DeletePost(string postId, string userId)
         {
             var post = await _postRepository.GetAsync(postId);
