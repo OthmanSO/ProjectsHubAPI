@@ -1,6 +1,7 @@
 ﻿using ProjectsHub.Core;
 using ProjectsHub.Model;
 using ProjectsHub.Exceptions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ProjectsHub.API.Services
 {
@@ -41,10 +42,51 @@ namespace ProjectsHub.API.Services
         }
 
 
-        public async Task<PostReturnDto> GetPost(string id)
+        public async Task<PostReturnDto> GetPost(string userId, string postId)
         {
-            var post = await _postRepository.GetAsync(id);
-            return post.ToPostReturnDto();
+            var post = await _postRepository.GetAsync(postId);
+            return post.ToPostReturnDto(userId);
+        }
+
+        public async Task LikePost(string userId, string postId)
+        {
+            var user = await _userService.GetUserProfileById(userId);
+            if (user == null)
+                throw new Exception();
+
+            var post = await _postRepository.GetAsync(postId);
+            if (post== null) throw new Exception();
+
+            if (post.UsersWhoLiked.IsNullOrEmpty())
+            {
+                post.UsersWhoLiked = new List<string>();
+            }
+            if (!post.UsersWhoLiked.Any(x => x.Equals(userId)))
+            {
+                post.UsersWhoLiked.Add(userId);
+                Console.WriteLine($"user {userId} now likes post {postId}");
+            }
+
+            await _postRepository.UpdateAsync(postId, post);
+        }
+
+        public async Task UnLikePost(string userId, string postId)
+        {
+            var user = await _userService.GetUserProfileById(userId);
+            if (user == null)
+                throw new Exception();
+
+            var post = await _postRepository.GetAsync(postId);
+            if (post == null) throw new Exception();
+
+            if (post.UsersWhoLiked.IsNullOrEmpty() || !post.UsersWhoLiked.Any(x => x.Equals(userId)))
+            {
+                return;
+            }
+            post.UsersWhoLiked.Remove(userId);
+            Console.WriteLine($"user {userId} unliked post {postId}");
+
+            await _postRepository.UpdateAsync(postId, post);
         }
     }
 }

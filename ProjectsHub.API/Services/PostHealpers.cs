@@ -5,7 +5,7 @@ namespace ProjectsHub.API.Services
 {
     public static class PostHealpers
     {
-        public static PostReturnDto ToPostReturnDto(this Post post) => new PostReturnDto
+        public static PostReturnDto ToPostReturnDto(this Post post,string userId = "") => new PostReturnDto
         {
             _id = post._id,
             Title = post.Title,
@@ -14,7 +14,8 @@ namespace ProjectsHub.API.Services
             AuthorId = post.AuthorId,
             UsersWhoLiked = post.UsersWhoLiked.Count,
             PostChunks = post.PostChunks,
-            Comments = post.Comments
+            Comments = post.Comments,
+            IsLiked = post.UsersWhoLiked.Any(user => user.Equals(userId))
         };
 
         public static void FromCreatePostDto(this Post post, CreatePostDto createPost) 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectsHub.Core;
 using ProjectsHub.Exceptions;
 using ProjectsHub.Model;
+using ZstdSharp.Unsafe;
 
 namespace ProjectsHub.API.Controllers
 {
@@ -21,7 +22,7 @@ namespace ProjectsHub.API.Controllers
 
 
         [HttpPost()]
-        public async Task<ActionResult> PostingAPost([FromBody] CreatePostDto post)
+        public async Task<IActionResult> PostingAPost([FromBody] CreatePostDto post)
         {
             try
             {
@@ -48,15 +49,16 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PostReturnDto>> GetPost(string id)
+        [HttpGet("{postId}")]
+        public async Task<ActionResult<PostReturnDto>> GetPost(string postid)
         {
             try
             {
-                var post = await _postService.GetPost(id);
-                return (post);
+                var userId = _userToken.GetUserIdFromToken();
+                var post = await _postService.GetPost(userId, postid);
+                return post;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return NotFound();
             }
@@ -70,7 +72,7 @@ namespace ProjectsHub.API.Controllers
             {
                 await _postService.DeletePost(id, _userToken.GetUserIdFromToken().ToString());
             }
-            catch(UserDoesNotHavePermissionException)
+            catch (UserDoesNotHavePermissionException)
             {
                 return Unauthorized();
             }
@@ -79,6 +81,37 @@ namespace ProjectsHub.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Database is not connected, we are working on this!");
             }
             return Ok();
+        }
+
+
+        [HttpPut("Like/{postId}")]
+        public async Task<IActionResult> LikePost(string postId)
+        {
+            var userId = _userToken.GetUserIdFromToken();
+            try
+            {
+                await _postService.LikePost(userId, postId);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut("unLike/{postId}")]
+        public async Task<IActionResult> UnLikePost(string postId)
+        {
+            var userId = _userToken.GetUserIdFromToken();
+            try
+            {
+                await _postService.UnLikePost(userId, postId);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
     }
 }
