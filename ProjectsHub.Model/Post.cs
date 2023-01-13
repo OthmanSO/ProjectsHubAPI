@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace ProjectsHub.Model
 {
-    public class ReturnPostDto
+    public class Post
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

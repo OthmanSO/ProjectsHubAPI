@@ -1,18 +1,23 @@
-﻿namespace ProjectsHub.Model
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+namespace ProjectsHub.Model
 {
     public class UserAccount
     {
-        public Guid _Id { get; set; }
-        public String FirstName { get; set; }
-        public String LastName { get; set; }
-        public String Email { get; set; }
-        public String Password { get; set; }
-        public String Bio { get; set; }
-        public String ProfilePicture { get; set; }
-        public List<Guid>? Projects { get; set; }
-        public List<Guid>? Posts { get; set; }
-        public List<Guid>? Following { get; set; }
-        public List<Guid>? Followers { get; set; }
-        public List<Guid>? Contacts { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string _Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Bio { get; set; } = "";
+        public string ProfilePicture { get; set; } = "";
+        public List<string> Posts { get; set; }
+        public List<string> Projects { get; set; } = new List<string>();
+        public List<string> Following { get; set; } = new List<string>();
+        public List<string> Followers { get; set; } =new List<string>();
+        public List<string> Contacts { get; set; } = new List<string>();
     }
 }

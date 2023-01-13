@@ -1,185 +1,38 @@
-﻿using System.Collections;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using ProjectsHub.Core;
 using ProjectsHub.Model;
-using System.Security.Cryptography;
 
 namespace ProjectsHub.Data
 {
-    public class UserRepository
+    internal class UserRepository : IUserRepository
     {
-        private List<UserAccount> UsersList = new List<UserAccount>();
-
-        public void setProfilePic(Guid userId, string encodedProfilePic)
+        private readonly IMongoCollection<UserAccount> _userCollection;
+        public UserRepository(IOptions<MongoDBOptions> options)
         {
-            var userAccount = GetUserAccountByID(userId);   
-            userAccount.ProfilePicture = encodedProfilePic;
+            var mongoClient = new MongoClient(options.Value.ConnectionURI);
+            var mongoDatabase = mongoClient.GetDatabase(options.Value.DatabaseName);
+            _userCollection = mongoDatabase.GetCollection<UserAccount>(options.Value.UserCollectionName);
         }
 
-        public void setUserName(Guid userId, UserNameDto newUserName)
+        public async Task<UserAccount> CreateAsync(UserAccount userAccount)
         {
-            var userAccount = GetUserAccountByID(userId);
-            userAccount.FirstName = newUserName.FirstName;
-            userAccount.LastName = newUserName.LastName;
+            await _userCollection.InsertOneAsync(userAccount);
+            return userAccount;
         }
 
-        public void SetUserPassword(Guid userId, string password)
-        {
-            var userAccount = GetUserAccountByID(userId);
-            userAccount.Password = password;
-        }
+        public async Task UpdateAsync(string id, UserAccount updatedUserAccount) =>
+           await _userCollection.ReplaceOneAsync(user => user._Id.Equals(id), updatedUserAccount);
 
-        public UserAccount GetUserAccountByID(Guid userId)
-        {
-            return UsersList.First(x => x._Id == userId);
-        }
+        public async Task<UserAccount> GetAsync(string id) =>
+          await _userCollection.Find(user => user._Id.Equals(id)).FirstAsync();
 
-        public IEnumerable<Guid> GetUserContacts(Guid userId)
-        {
-            var user = GetUserAccountByID(userId);
-            return user.Contacts != null ? user.Contacts : new List<Guid>();
-        }
 
-        public void DeleteContact(Guid userId, Guid contactId)
-        {
-            var usr = GetUserAccountByID(userId);
-            usr.Contacts.Remove(contactId);
-        }
+        public async Task<UserAccount> GetByEmailAsync(string Email) =>
+           await _userCollection.Find(user => user.Email.Equals(Email)).FirstOrDefaultAsync();
 
-        public void AddContact(Guid userId, Guid contactId)
-        {
-            var user1 = GetUserAccountByID(userId); 
-            var user2 = GetUserAccountByID(contactId);
 
-            if (user1.Contacts == null)
-                user1.Contacts = new List<Guid>();
-
-            if (user2.Contacts == null)
-                user2.Contacts = new List<Guid>();
-
-            if (!user1.Contacts.Any(x => x.Equals(contactId)))
-            {
-                user1.Contacts.Add(contactId);
-            }
-
-            if (!user2.Contacts.Any(x => x.Equals(userId)))
-            {
-                user2.Contacts.Add(userId);
-            }
-        }
-
-        public void setUserBio(Guid userId, String Bio)
-        {
-            var userAccount = GetUserAccountByID(userId);
-            userAccount.Bio = Bio;
-        }
-
-        public UserAccount GetUserByEmail(String Email)
-        {
-            return (from userAccount in UsersList
-                    where userAccount.Email == Email
-                    select userAccount).FirstOrDefault();
-        }
-
-        public Guid CreateUser(UserAccountCreate user)
-        {
-            var _Id = Guid.NewGuid();
-            UsersList.Add(new UserAccount { _Id = _Id, FirstName = user.FirstName, LastName = user.LastName, Email = user.Email, Password = user.Password, ProfilePicture = user.ProfilePicture });
-            Console.WriteLine(_Id);
-            return _Id;
-        }
-
-        public UserAccountProfileDto GetUserById (Guid userId) 
-        {
-            List<Guid> lastFivePosts = new List<Guid>();
-            List<Guid> lastFiveProjects = new List<Guid>();
-
-            var user = (from userAccount in UsersList
-                        where userAccount._Id == userId
-                        select userAccount).First();
-
-            if (user == null)
-            {
-                Console.WriteLine("no user");
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            if (user.Posts != null)
-            {
-
-                lastFivePosts = (from post in user.Posts
-                                 select post).Take(5).ToList();
-            }
-
-            if (user.Projects != null)
-            {
-                lastFiveProjects = (from post in user.Projects
-                                    select post).Take(5).ToList();
-            }
-
-            return new UserAccountProfileDto
-            {
-                _Id = user._Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Bio = user.Bio,
-                ProfilePicture = user.ProfilePicture,
-                Following = user.Following != null ? user.Following.Count() : 0,
-                Followers = user.Followers != null ? user.Followers.Count() : 0,
-                Posts = lastFivePosts,
-                Projects = lastFiveProjects
-            };
-        }
-
-        public List<Guid> GetGetListOfFollwing(Guid userId)
-        {
-            var user = GetUserAccountByID(userId);
-            if (user.Following == null)
-                user.Following = new List<Guid>();
-            return user.Following;
-        }
-
-        public List<Guid> GetGetListOfFollwers(Guid userId)
-        {
-            var user = GetUserAccountByID(userId);
-            if (user.Followers == null)
-                user.Followers = new List<Guid>();
-            return user.Followers;
-        }
-
-        public void UnfollowUser(Guid userId, Guid unfollowUserId)
-        {
-            var user = GetUserAccountByID(userId);
-            if (user.Following != null)
-            {
-                user.Following.Remove(unfollowUserId);
-            }
-            var UnfollowedUser = GetUserAccountByID(unfollowUserId);
-            if (UnfollowedUser.Followers != null)
-            {
-                UnfollowedUser.Followers.Remove(userId);
-            }
-        }
-
-        public void FollowUser(Guid userId, Guid unfollowUserId)
-        {
-            var user = GetUserAccountByID(userId);
-            var FollowedUser = GetUserAccountByID(unfollowUserId);
-
-            if (user.Following == null)
-                user.Following = new List<Guid>();
-
-            if (FollowedUser.Followers == null)
-                FollowedUser.Followers = new List<Guid>();
-
-            if (!user.Following.Any(x => x.Equals(unfollowUserId)))
-            {
-                user.Following.Add(unfollowUserId);
-            }
-            if (!FollowedUser.Followers.Any(x => x.Equals(userId)))
-            {
-                FollowedUser.Followers.Add(userId);
-            }
-        }
+        public async Task RemoveAsync(string id) =>
+           await _userCollection.DeleteOneAsync(user => user._Id.Equals(id));
     }
 }

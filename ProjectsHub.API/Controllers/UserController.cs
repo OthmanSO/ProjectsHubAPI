@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using ProjectsHub.API.Services;
 using ProjectsHub.Core;
 using ProjectsHub.Exceptions;
@@ -22,7 +23,7 @@ namespace ProjectsHub.API.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<ActionResult> SignUp([FromBody] UserAccountCreate user)
+        public async Task<IActionResult> SignUp([FromBody] UserAccountCreate user)
         {
             if (user == null
                 || string.IsNullOrEmpty(user.FirstName)
@@ -32,39 +33,52 @@ namespace ProjectsHub.API.Controllers
                 return BadRequest("Required feild missing");
             try
             {
-                var userId = _UserService.CreateUser(user);
-                var userName = $"{user.FirstName} {user.LastName}";
-                var tokenString = _userToken.CreateUserToken(userId, userName, user.Email);
-                return Created(userId.ToString(), tokenString);
+                var CreatedUser = await _UserService.CreateUser(user);
+                var userName = $"{CreatedUser.FirstName} {CreatedUser.LastName}";
+                var tokenString = _userToken.CreateUserToken(CreatedUser._Id, userName, CreatedUser.Email);
+                return Created(CreatedUser._Id, tokenString);
             }
-            catch (UserAlreadyExistException ex)
+            catch(BadEmailException) 
+            {
+                return BadRequest("Invalid Email");
+            }
+            catch (UserAlreadyExistException)
             {
                 return Conflict("User Already Exists");
             }
-
-            return NotFound();
-
+            catch (NullReferenceException)
+            {
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
+            }
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] UserAuth user)
+        public async Task<IActionResult> Login([FromBody] UserAuth user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
                 return BadRequest("Missing Email or Password");
             try
             {
-                var loggedInUser = _UserService.GetLoggedInUser(user.Email, user.Password);
+                var loggedInUser = await _UserService.GetLoggedInUser(user.Email, user.Password);
                 var userName = $"{loggedInUser.FirstName} {loggedInUser.LastName}";
                 var tokenString = _userToken.CreateUserToken(loggedInUser._Id, userName, loggedInUser.Email);
                 return Ok(tokenString);
             }
-            catch (UserPasswordNotMatchedException e)
+            catch (UserPasswordNotMatchedException)
             {
                 return BadRequest("Password Mismatch");
             }
-            catch (Exception e)
+            catch (NullReferenceException)
             {
                 return NotFound("User Not Found");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -81,12 +95,16 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
+                await _UserService.ChangeProfilePic(id, ProfilePic.EncodedProfilePicture);
                 return Ok();
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound("User not found");
             }
             catch (Exception e)
             {
-                return NotFound("User not found");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -103,12 +121,16 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                _UserService.ChangeUserBio(id, UserBio.bio);
+                await _UserService.ChangeUserBio(id, UserBio.bio);
                 return Ok();
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound("User not found");
             }
             catch (Exception e)
             {
-                return NotFound("User not found");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -125,16 +147,20 @@ namespace ProjectsHub.API.Controllers
 
             try
             {
-                _UserService.ChangeUserPassword(id, userPasswords);
+                await _UserService.ChangeUserPassword(id, userPasswords);
                 return Ok();
             }
-            catch (UserPasswordNotMatchedException e)
+            catch (UserPasswordNotMatchedException)
             {
                 return Unauthorized("Old Password Mismatch");
-            }
-            catch (ArgumentNullException e)
+            }   
+            catch (NullReferenceException)
             {
                 return NotFound("User Not Found");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -149,12 +175,16 @@ namespace ProjectsHub.API.Controllers
             var id = _userToken.GetUserIdFromToken();
             try
             {
-                _UserService.ChangeUserName(id, UserName);
+                await _UserService.ChangeUserName(id, UserName);
                 return Ok();
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound("User not found");
             }
             catch (Exception e)
             {
-                return NotFound("User not found");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -169,16 +199,16 @@ namespace ProjectsHub.API.Controllers
             var id = _userToken.GetUserIdFromToken();
             try
             {
-                _UserService.AddContact(id, Guid.Parse(Contact.ContactId));
+                await _UserService.AddContact(id, Contact.ContactId);
                 return Ok();
             }
-            catch (FormatException e)
+            catch (NullReferenceException)
             {
-                return BadRequest();
+                return NotFound("user Not Found");
             }
             catch (Exception e)
             {
-                return NotFound("User not found");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
@@ -193,167 +223,125 @@ namespace ProjectsHub.API.Controllers
             var id = _userToken.GetUserIdFromToken();
             try
             {
-                _UserService.DeleteContact(id, Guid.Parse(Contact.ContactId));
+                await _UserService.DeleteContact(id, Contact.ContactId);
                 return Ok();
             }
-            catch (FormatException e)
+            catch (NullReferenceException)
             {
-                return BadRequest();
+                return Ok();
             }
             catch (Exception e)
             {
-                return Ok();
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
         [Authorize]
-        [HttpGet("Followers")]
         [HttpGet("Followers/{userId}")]
-        public async Task<IActionResult> GetUserFollowers(string userId)
+        [HttpGet("Followers")]
+        public async Task<IActionResult> GetUserFollowers(string? userId)
         {
-            Guid id;
+            var id = userId ?? _userToken.GetUserIdFromToken();
+
             try
             {
-                if (!userId.IsNullOrEmpty())
-                {
-                    id = Guid.Parse(userId);
-                }
-                else
-                {
-                    id = _userToken.GetUserIdFromToken();
-                }
-            }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var listOfUsersFollowingUserAccount = _UserService.GetListOfFollwers(id);
+                var listOfUsersFollowingUserAccount = await _UserService.GetListOfFollwers(id);
                 return Ok(listOfUsersFollowingUserAccount);
             }
-            catch (Exception e)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
         [Authorize]
-        [HttpGet("Following")]
         [HttpGet("Following/{userId}")]
+        [HttpGet("Following")]
         public async Task<IActionResult> GetUserFollowing(string? userId)
         {
-            Guid id;
+            var id = userId ?? _userToken.GetUserIdFromToken();
+
             try
             {
-                if (!userId.IsNullOrEmpty())
-                {
-                    id = Guid.Parse(userId);
-                }
-                else
-                {
-                    id = _userToken.GetUserIdFromToken();
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var listOfUsersThatUserAccountFollow = _UserService.GetListOfFollwing(id);
+                var listOfUsersThatUserAccountFollow = await _UserService.GetListOfFollwing(id);
                 return Ok(listOfUsersThatUserAccountFollow);
             }
-            catch (Exception e)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
 
 
         [Authorize]
-        [HttpGet("Contacts")]
         [HttpGet("Contacts/{id}")]
-        public async Task<IActionResult> UserContacts(string id)
+        [HttpGet("Contacts")]
+        public async Task<IActionResult> UserContacts(string? userId)
         {
-            Guid userId;   
-            if (id == null)
-            {
-                userId = _userToken.GetUserIdFromToken();
-            }
-            else
-            {
-                userId = Guid.Parse(id);
-            }
-
-            if (userId == Guid.Empty)
-            {
-                return BadRequest("Log in or include user identifier first");
-            }
+            var id = userId ?? _userToken.GetUserIdFromToken();
             try
             {
-                var Contacts = _UserService.GetUserContacts(userId);
+                var Contacts = await _UserService.GetUserContacts(userId);
                 return Ok(Contacts);
             }
-            catch (ArgumentNullException e)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
-                return NotFound("user Not Found");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
 
-        [HttpGet()]
         [HttpGet("{id}")]
-        public async Task<IActionResult> userProfile(string? id)
-        {
-            var userId = new Guid();
-
-            if (id == null)
+        [HttpGet()]
+        public async Task<IActionResult> userProfile(string? userId)
+        {   
+            try
             {
-                userId = _userToken.GetUserIdFromToken();
+                var id = userId ?? _userToken.GetUserIdFromToken();
+                var userProfile = await _UserService.GetUserProfileById(id);
+                return Ok(userProfile);
             }
-            else
+            catch (NullReferenceException)
             {
-                userId = Guid.Parse(id);
-            }
-
-            if (userId == Guid.Empty)
-            {
-                return BadRequest("Log in or include user identifier first");
-            }
-
-            var userProfile = _UserService.GetUserProfileById(userId);
-
-            if (userProfile == null)
                 return NotFound("user Not Found");
-            return Ok(userProfile);
+            }
+            catch (InvalidOperationException)
+            {
+                return Unauthorized("user Not Logged in");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
+            }
         }
-        
+
         [HttpGet("shortProfile/{id}")]
         public async Task<IActionResult> UserShortProfile(string id)
         {
-            var userId = new Guid();
-
             try
             {
-                var userShortProfile = _UserService.GetUserShortPeofile(Guid.Parse(id));
+                var userShortProfile = await _UserService.GetUserShortPeofile(id);
                 return Ok(userShortProfile);
             }
-            catch (FormatException e)
-            {
-                return BadRequest("Wrong userId");
-            }
-            catch (ArgumentNullException e)
+            catch (NullReferenceException)
             {
                 return NotFound("user Not Found");
             }
-            catch (InvalidOperationException e)
+            catch (Exception)
             {
-                return NotFound("user Not Found");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -361,56 +349,40 @@ namespace ProjectsHub.API.Controllers
         [HttpPut("Follow/{followUserId}")]
         public async Task<IActionResult> FollowUser(string followUserId)
         {
-            if (followUserId.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
             var id = _userToken.GetUserIdFromToken();
             try
             {
-                _UserService.FollowUser(id, Guid.Parse(followUserId));
+                await _UserService.FollowUser(id, followUserId);
+                return Ok();
             }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            catch (ArgumentNullException e)
+            catch (NullReferenceException)
             {
                 return NotFound("User not found");
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
-                return NotFound("user Not Found");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
-            return Ok();
         }
 
         [Authorize]
         [HttpPut("Unfollow/{unfollowUserId}")]
         public async Task<IActionResult> UnfollowUser(string unfollowUserId)
         {
-            if (unfollowUserId.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
             var id = _userToken.GetUserIdFromToken();
             try
             {
-                _UserService.UnfollowUser(id, Guid.Parse(unfollowUserId));
+                await _UserService.UnfollowUser(id, unfollowUserId);
+                return Ok();
             }
-            catch (FormatException e)
-            {
-                return BadRequest();
-            }
-            catch (ArgumentNullException e)
+            catch (NullReferenceException)
             {
                 return NotFound("User not found");
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
-                return NotFound("user Not Found");
+                return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
-            return Ok();
         }
     }
 }

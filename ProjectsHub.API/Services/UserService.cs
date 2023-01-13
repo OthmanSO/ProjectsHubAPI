@@ -1,129 +1,166 @@
-﻿using ProjectsHub.Data;
+﻿using ProjectsHub.Core;
 using ProjectsHub.Model;
 using ProjectsHub.Exceptions;
-using System.Security.Cryptography;
-using System.Text;
+using ProjectsHub.API.Controllers;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ProjectsHub.API.Services
 {
     public class UserService
     {
-        private readonly UserRepository _userRepository;
-        public UserService(UserRepository usrRepo)
+        private readonly IUserRepository _userRepository;
+        public UserService(IUserRepository usrRepo)
         {
-            this._userRepository = usrRepo ?? throw new ArgumentNullException(nameof(UserRepository));
+            this._userRepository = usrRepo ?? throw new ArgumentNullException(nameof(IUserRepository));
         }
-        public UserAccount GetLoggedInUser(string Email, string Password)
+        public async Task<UserAccount> GetLoggedInUser(string Email, string Password)
         {
-            var user = GetUserByEmail(Email);
-            if (ComputePasswordHash(Password).Equals(user.Password))
+            var user = await _userRepository.GetByEmailAsync(Email.ToLower());
+            var EncodedPassword = Password.ComputePasswordHash();
+            if (EncodedPassword.Equals(user.Password))
                 return user;
             throw new UserPasswordNotMatchedException();
         }
-        private UserAccount GetUserByEmail(string Email)
+        
+        public async Task<UserAccount> CreateUser(UserAccountCreate user)
         {
-            return (UserAccount)_userRepository.GetUserByEmail(Email.ToLower());
-        }
-
-        public Guid CreateUser(UserAccountCreate user)
-        {
-            var userAlreadyExist = GetUserByEmail(user.Email);
+            if (!user.IsValidEmail())
+            {
+                throw new BadEmailException();
+            }
+            var userAlreadyExist = await _userRepository.GetByEmailAsync(user.Email.ToLower());
             if (userAlreadyExist != null)
             {
                 throw new UserAlreadyExistException();
             }
-            user.Password = ComputePasswordHash(user.Password);
-            var userCreatedId = _userRepository.CreateUser(user);
-            return userCreatedId;
-        }
-        private static String ComputePasswordHash(String Password)
-        {
-            var sha256 = SHA256.Create();
-            var byteValue = Encoding.UTF8.GetBytes(Password);
-            var byteHash = sha256.ComputeHash(byteValue);
-            return Convert.ToBase64String(byteHash);
+
+            var createUser = new UserAccount();
+            createUser.FromUserAccountCreateDto(user);
+
+            var createdUser = await _userRepository.CreateAsync(createUser);
+            return createdUser;
         }
 
-        internal UserAccountProfileDto GetUserProfileById(Guid userId)
+        public async Task<UserAccountProfileDto> GetUserProfileById(string userId) =>
+            (await _userRepository.GetAsync(userId)).ToUserAccountProfileDto();
+
+        public async Task ChangeProfilePic(string userId, string encodedProfilePic)
         {
-            var user = _userRepository.GetUserById(userId);
-            return user;
+            var user = await _userRepository.GetAsync(userId);
+            user.ProfilePicture = encodedProfilePic;
+            await _userRepository.UpdateAsync(userId, user);
         }
 
-        internal void ChangeProfilePic(Guid userId, string encodedProfilePic)
+        public async Task ChangeUserBio(string userId, string bio)
         {
-            _userRepository.setProfilePic(userId, encodedProfilePic);
+            var user = await _userRepository.GetAsync(userId);
+            user.Bio = bio;
+            await _userRepository.UpdateAsync(userId, user);
         }
 
-        internal void ChangeUserBio(Guid userId, string bio)
+        public async Task ChangeUserName(string userId, UserNameDto newUserName)
         {
-            _userRepository.setUserBio(userId, bio);
+            var user = await _userRepository.GetAsync(userId);
+            user.FirstName = newUserName.FirstName;
+            user.LastName = newUserName.LastName;
+            await _userRepository.UpdateAsync(userId, user);
         }
 
-        internal void ChangeUserName(Guid userId, UserNameDto newUserName)
-        {
-            _userRepository.setUserName(userId, newUserName);
-        }
 
-
-        internal void ChangeUserPassword(Guid userId, PasswordUpdateDto userPasswords)
+        public async Task ChangeUserPassword(string userId, PasswordUpdateDto userPasswords)
         {
-            UserAccount user = _userRepository.GetUserAccountByID(userId);
-            if (user.Password.Equals(ComputePasswordHash(userPasswords.OldPassword)))
+            var user = await _userRepository.GetAsync(userId);
+            if (user.Password.Equals(userPasswords.OldPassword.ComputePasswordHash()))
             {
-                _userRepository.SetUserPassword(userId, ComputePasswordHash(userPasswords.NewPassword));
+                user.Password = userPasswords.NewPassword.ComputePasswordHash();
+                await _userRepository.UpdateAsync(userId, user);
                 return;
             }
             throw new UserPasswordNotMatchedException();
         }
-        internal void AddContact(Guid userId, Guid contactId)
+        public async Task AddContact(string userId, string contactId)
         {
-            _userRepository.AddContact(userId, contactId);
+            var user1 = await _userRepository.GetAsync(userId);
+            var user2 = await _userRepository.GetAsync(contactId);
+
+            if (user1.Contacts.IsNullOrEmpty() || !user1.Contacts.Any(x => x.Equals(contactId)))
+            {
+                user1.Contacts.Add(contactId);
+            }
+
+            if (user2.Contacts.IsNullOrEmpty() || !user2.Contacts.Any(x => x.Equals(userId)))
+            {
+                user2.Contacts.Add(userId);
+            }
+            await _userRepository.UpdateAsync(userId, user1);
+            await _userRepository.UpdateAsync(contactId, user2);
         }
 
-        internal IEnumerable<Guid> GetUserContacts(Guid userId)
+        public async Task<List<string>> GetUserContacts(string userId)
         {
-            return _userRepository.GetUserContacts(userId);
+            var user = await _userRepository.GetAsync(userId);
+            return user.Contacts;
         }
 
-        internal void DeleteContact(Guid userId, Guid ContactId)
+        public async Task DeleteContact(string userId, string contactId)
         {
-            _userRepository.DeleteContact(userId, ContactId);
+            var user = await _userRepository.GetAsync(userId);
+            user.Contacts.Remove(contactId);
+            await _userRepository.UpdateAsync(userId, user);
         }
 
-        internal UserShortProfileDto GetUserShortPeofile(Guid userId)
+        public async Task<UserShortProfileDto> GetUserShortPeofile(string userId)
         {
-            var user = _userRepository.GetUserById(userId);
-            var userShortProfile = new UserShortProfileDto { _id = user._Id, FirstName = user.FirstName, LastName = user.LastName, ProfilePic = user.ProfilePicture };
+            var user = await _userRepository.GetAsync(userId);
+            var userShortProfile = user.ToUserShortProfileDto();
             return userShortProfile;
         }
 
-        internal void FollowUser(Guid userId, Guid followUserId)
+        public async Task FollowUser(string userId, string followUserId)
         {
             //check if exist
-            var loggedinUser = _userRepository.GetUserById(userId);
-            var followUser = _userRepository.GetUserById(followUserId);
+            var user = await _userRepository.GetAsync(userId);
+            var followedUser = await _userRepository.GetAsync(followUserId);
 
-            _userRepository.FollowUser(userId, followUserId);
+            if (user.Following.IsNullOrEmpty() || !user.Following.Any(x => x.Equals(followUserId)))
+            {
+                user.Following.Add(followUserId);
+            }
+            if (followedUser.Followers.IsNullOrEmpty() || !followedUser.Followers.Any(x => x.Equals(userId)))
+            {
+                followedUser.Followers.Add(userId);
+            }
         }
 
-        internal void UnfollowUser(Guid userId, Guid unfollowUserId)
+        public async Task UnfollowUser(string userId, string unfollowUserId)
         {
             //check if exist
-            var loggedinUser = _userRepository.GetUserById(userId);
-            var followUser = _userRepository.GetUserById(unfollowUserId);
+            var user = await _userRepository.GetAsync(userId);
+            var unfollowedUser = await _userRepository.GetAsync(unfollowUserId);
 
-            _userRepository.UnfollowUser(userId, unfollowUserId);
+            user.Following.Remove(unfollowUserId);
+            unfollowedUser.Followers.Remove(userId);
         }
 
-        internal List<Guid> GetListOfFollwers(Guid userId)
+        public async Task<List<string>> GetListOfFollwers(string userId) =>
+            (await _userRepository.GetAsync(userId)).Followers;
+
+
+        public async Task<List<string>> GetListOfFollwing(string userId) =>
+            (await _userRepository.GetAsync(userId)).Following;
+
+        internal async Task AddPost(string userId, string postId)
         {
-            return _userRepository.GetGetListOfFollwers(userId);
+            var user = await _userRepository.GetAsync(userId);
+            user.Posts.Insert(0, postId);
+            await _userRepository.UpdateAsync(userId, user);
         }
 
-        internal object GetListOfFollwing(Guid userId)
+        internal async Task RemovePost(string userId, string postId)
         {
-            return _userRepository.GetGetListOfFollwing(userId);
+            var user = await _userRepository.GetAsync(userId);
+            user.Posts.Remove(postId);
+            await _userRepository.UpdateAsync(userId, user);
         }
     }
 }
