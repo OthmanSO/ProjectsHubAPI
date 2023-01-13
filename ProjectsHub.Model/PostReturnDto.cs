@@ -10,5 +10,6 @@
         public int UsersWhoLiked { get; set; }
         public List<Chunk> PostChunks { get; set; }
         public List<Comment> Comments { get; set; }
+        public bool IsLiked { get; set; }
     }
 }
