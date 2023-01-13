@@ -2,7 +2,7 @@
 {
     public interface IUserToken
     {
-        public string CreateUserToken(Guid userId, string UserName, string Email);
-        public Guid GetUserIdFromToken();
+        public string CreateUserToken(string userId, string UserName, string Email);
+        public string GetUserIdFromToken();
     }
 }

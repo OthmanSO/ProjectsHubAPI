@@ -4,11 +4,11 @@ namespace ProjectsHub.Core
 {
     public interface IPostRepository
     {
-        public Task<List<ReturnPostDto>> GetAsync();
-        public Task<ReturnPostDto> GetAsync(string id);
-        public Task<List<ReturnPostDto>> GetByAuthorAsync(string id);
-        public Task<ReturnPostDto> CreateAsync(ReturnPostDto newPost);
-        public Task UpdateAsync(string id, ReturnPostDto updatedPost);
+        public Task<List<Post>> GetAsync();
+        public Task<Post> GetAsync(string id);
+        public Task<List<Post>> GetByAuthorAsync(string id);
+        public Task<Post> CreateAsync(Post newPost);
+        public Task UpdateAsync(string id, Post updatedPost);
         public Task RemoveAsync(string id);
     }
 }

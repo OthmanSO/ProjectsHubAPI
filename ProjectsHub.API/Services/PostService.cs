@@ -14,14 +14,19 @@ namespace ProjectsHub.API.Services
             this._userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        public async Task<ReturnPostDto> CreatePost(CreatePostDto post, string userId)
+        public async Task<PostReturnDto> CreatePost(CreatePostDto post, string userId)
         {
             //if doesnot exist throw exception 
-            _userService.GetUserProfileById(Guid.Parse(userId));
-            ReturnPostDto createPost = new ReturnPostDto();
+            var user = await _userService.GetUserProfileById(userId);
+
+            var createPost = new Post();
             createPost.FromCreatePostDto(post);
             createPost.AuthorId = userId;
-            return await _postRepository.CreateAsync(createPost);
+
+            var createdPost = (await _postRepository.CreateAsync(createPost)).ToPostReturnDto();
+
+            await _userService.AddPost(userId, createdPost._id);
+            return createdPost;
         }
 
         public async Task DeletePost(string postId, string userId)
@@ -31,7 +36,8 @@ namespace ProjectsHub.API.Services
             {
                 throw new UserDoesNotHavePermissionException();
             }
-            _postRepository.RemoveAsync(postId);
+            await _userService.RemovePost(userId, postId);
+            await _postRepository.RemoveAsync(postId);
         }
 
 
