@@ -16,13 +16,20 @@ namespace ProjectsHub.API.Services
         }
 
         public async Task<List<Comment>> CommentOnPost(string userId, string postId, Chunk comment)
-        {
+        {   
             var user = await _userService.GetUserProfileById(userId);
-            if (user == null) throw new Exception();
+            if (user == null)
+            {
+                Console.WriteLine($"user {userId} not found!");
+                throw new Exception();
+            }
 
             var post = await _postRepository.GetAsync(postId);
-            if (post == null) throw new Exception();
-
+            if (post == null)
+            {
+                Console.WriteLine($"post not found {postId}");
+                throw new Exception();
+            }
             post.Comments = post.Comments ?? new List<Comment>();
 
             int lastComment = post.Comments.GetLastComment();

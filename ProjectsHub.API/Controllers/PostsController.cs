@@ -123,9 +123,9 @@ namespace ProjectsHub.API.Controllers
                 var comments = await _postService.CommentOnPost(userId, postId, comment);
                 return Ok(comments);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return NotFound();
+                return NotFound(e.ToString());
             }
         }
 
