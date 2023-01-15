@@ -15,8 +15,8 @@ namespace ProjectsHub.API.Services
             this._userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        public async Task<List<Comment>> CommentOnPost(string userId, string postId, Chunk comment)
-        {   
+        public async Task<List<CommentReturnDto>> CommentOnPost(string userId, string postId, Chunk comment)
+        {
             var user = await _userService.GetUserProfileById(userId);
             if (user == null)
             {
@@ -48,7 +48,9 @@ namespace ProjectsHub.API.Services
 
             Console.WriteLine($"user {userId} Commented on post {post}, comment Id = {createComment.Id}");
 
-            return post.Comments.OrderBy(c => c.CreatedDate).ToList();
+            var returnComments = await ToCommentReturnDtoList(post.Comments.OrderBy(c => c.CreatedDate).ToList());
+
+            return returnComments;
         }
 
         public async Task<PostReturnDto> CreatePost(CreatePostDto post, string userId)
@@ -69,29 +71,43 @@ namespace ProjectsHub.API.Services
             return createdPost;
         }
 
-        public async Task<List<Comment>> DeleteCommentOnPost(string userId, string postId, int commentId)
+        public async Task<List<CommentReturnDto>> DeleteCommentOnPost(string userId, string postId, int commentId)
         {
             var user = await _userService.GetUserProfileById(userId);
-            if (user == null)  
-                throw new Exception();  
+            if (user == null)
+                throw new Exception();
 
             var post = await _postRepository.GetAsync(postId);
-            if (post == null) 
+            if (post == null)
                 throw new Exception();
 
             var comment = post.Comments.Find(c => c.Id == commentId);
-            if (comment == null) 
-                return new List<Comment>();
+            if (comment == null)
+                return new List<CommentReturnDto>();
 
             if (userId != comment.UserId)
                 throw new UserDoesNotHavePermissionException();
 
             post.Comments.Remove(comment);
 
-            _postRepository.UpdateAsync(postId, post);
+            await _postRepository.UpdateAsync(postId, post);
 
             Console.WriteLine($"user {userId} removed comment {commentId} on post {postId}");
-            return post.Comments.ToList();
+            var returnComments = await ToCommentReturnDtoList(post.Comments.OrderBy(c => c.CreatedDate).ToList());
+            return returnComments;
+        }
+
+        private async Task<List<CommentReturnDto>> ToCommentReturnDtoList(List<Comment> comments)
+        {
+            var TaskUsersList = comments.Select(c => _userService.GetUserShortPeofile(c.UserId));
+            var userList = await Task.WhenAll(TaskUsersList);
+            var retCommentsList = new List<CommentReturnDto>();
+            foreach(Comment c in comments)
+            {
+                var user = userList.Where(u => u._id.Equals(c.UserId)).FirstOrDefault();
+                retCommentsList.Add(c.ToCommentReturnDto(user));
+            }
+            return retCommentsList;
         }
 
         public async Task DeletePost(string postId, string userId)
@@ -155,6 +171,15 @@ namespace ProjectsHub.API.Services
             Console.WriteLine($"user {userId} unliked post {postId}");
 
             await _postRepository.UpdateAsync(postId, post);
+        }
+
+        public async Task<List<CommentReturnDto>> GetComments(string postId)
+        {
+            var post = await _postRepository.GetAsync(postId);
+            if (post == null)
+                throw new Exception();
+            var returnComments = await ToCommentReturnDtoList(post.Comments.OrderBy(c => c.CreatedDate).ToList());
+            return returnComments;
         }
     }
 }

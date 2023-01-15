@@ -64,6 +64,21 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
+        [HttpGet("{postId}/Comments")]
+        public async Task<ActionResult<List<CommentReturnDto>>> GetComments(string postid)
+        {
+            try
+            {
+                var userId = _userToken.GetUserIdFromToken();
+                var comments = await _postService.GetComments(postid);
+                return comments;
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePost(string id)
