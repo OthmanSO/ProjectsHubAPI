@@ -283,14 +283,13 @@ namespace ProjectsHub.API.Controllers
 
 
         [Authorize]
-        [HttpGet("Contacts/{id}")]
         [HttpGet("Contacts")]
-        public async Task<IActionResult> UserContacts(string? userId)
+        public async Task<IActionResult> UserContacts()
         {
-            var id = userId ?? _userToken.GetUserIdFromToken();
+            var id = _userToken.GetUserIdFromToken();
             try
             {
-                var Contacts = await _UserService.GetUserContacts(userId);
+                var Contacts = await _UserService.GetUserContacts(id);
                 return Ok(Contacts);
             }
             catch (NullReferenceException)
@@ -303,12 +302,13 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{userId}")]
         [HttpGet()]
         public async Task<IActionResult> userProfile(string? userId)
         {   
             try
             {
+                Console.WriteLine(userId);
                 var id = userId ?? _userToken.GetUserIdFromToken();
                 var userProfile = await _UserService.GetUserProfileById(id);
                 return Ok(userProfile);
