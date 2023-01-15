@@ -130,6 +130,8 @@ namespace ProjectsHub.API.Services
             {
                 followedUser.Followers.Add(userId);
             }
+            await _userRepository.UpdateAsync(userId, user);
+            await _userRepository.UpdateAsync(followUserId, followedUser);
         }
 
         public async Task UnfollowUser(string userId, string unfollowUserId)
@@ -140,6 +142,9 @@ namespace ProjectsHub.API.Services
 
             user.Following.Remove(unfollowUserId);
             unfollowedUser.Followers.Remove(userId);
+
+            await _userRepository.UpdateAsync(userId, user);
+            await _userRepository.UpdateAsync(unfollowUserId, unfollowedUser);
         }
 
         public async Task<List<string>> GetListOfFollwers(string userId) =>
