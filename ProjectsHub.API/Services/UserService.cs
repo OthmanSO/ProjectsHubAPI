@@ -167,5 +167,13 @@ namespace ProjectsHub.API.Services
             user.Posts.Remove(postId);
             await _userRepository.UpdateAsync(userId, user);
         }
+
+        internal async Task<bool> IsFollowing(string userId, string authorId)
+        {
+            var listOfFollowing = await GetListOfFollwing(userId);
+            if (listOfFollowing == null) 
+                return false;
+            return listOfFollowing.Any(x => x.Equals(authorId));
+        }
     }
 }

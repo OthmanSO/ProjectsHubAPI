@@ -181,5 +181,17 @@ namespace ProjectsHub.API.Services
             var returnComments = await ToCommentReturnDtoList(post.Comments.OrderBy(c => c.CreatedDate).ToList());
             return returnComments;
         }
+
+        public async Task<ShortPost> GetShortPost(string userId, string postId)
+        {
+            var post = await _postRepository.GetAsync(postId);
+            if (post == null)
+                throw new Exception();
+            var user = await _userService.GetUserShortPeofile(userId);
+            var isFollowed = await _userService.IsFollowing(userId, post.AuthorId);
+
+            var shortPost = post.ToShortPost(user, isFollowed, userId);
+            return shortPost;
+        }
     }
 }

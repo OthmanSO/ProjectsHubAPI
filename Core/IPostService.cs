@@ -12,5 +12,6 @@ namespace ProjectsHub.Core
         public Task<List<CommentReturnDto>> CommentOnPost(string userId, string postId, Chunk comment);
         public Task<List<CommentReturnDto>> DeleteCommentOnPost(string userId, string postId, int commentId);
         public Task<List<CommentReturnDto>> GetComments(string postid);
+        public Task<ShortPost> GetShortPost(string userId, string postId);
     }
 }
