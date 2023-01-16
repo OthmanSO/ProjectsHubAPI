@@ -35,6 +35,20 @@ namespace ProjectsHub.API.Services
                 LastName = user.LastName,
                 ProfilePic = user.ProfilePicture
             };
+
+        public static ShortPost ToShortPost(this Post post, UserShortProfileDto user, bool isFollowed, string userLoggedInId) =>
+            new ShortPost
+            {
+                _id = post._id,
+                Title = post.Title,
+                Author = user,
+                IsAuthorFollowed = isFollowed,
+                IsLiked = post.UsersWhoLiked.Any(user => user.Equals(userLoggedInId)),
+                Comments = post.Comments.Count,
+                UsersWhoLiked = post.UsersWhoLiked.Count,
+                CoverPicture = post.CoverPicture,
+                CreatedDate = post.CreatedDate
+            };
     }
 }
 

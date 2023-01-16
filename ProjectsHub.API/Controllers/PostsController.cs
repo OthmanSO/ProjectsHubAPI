@@ -162,5 +162,20 @@ namespace ProjectsHub.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet("{postId}/ShortPost")]
+        public async Task<ActionResult<ShortPost>> GetShortPost(string postId)
+        {
+            var userId = _userToken.GetUserIdFromToken();
+            try
+            {
+                var shortPost = await _postService.GetShortPost(userId, postId);
+                return Ok(shortPost);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
     }
 }
