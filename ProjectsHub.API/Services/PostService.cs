@@ -2,6 +2,7 @@
 using ProjectsHub.Model;
 using ProjectsHub.Exceptions;
 using Microsoft.IdentityModel.Tokens;
+using System.Xml.Linq;
 
 namespace ProjectsHub.API.Services
 {
@@ -102,7 +103,7 @@ namespace ProjectsHub.API.Services
             var TaskUsersList = comments.Select(c => _userService.GetUserShortPeofile(c.UserId));
             var userList = await Task.WhenAll(TaskUsersList);
             var retCommentsList = new List<CommentReturnDto>();
-            foreach(Comment c in comments)
+            foreach (Comment c in comments)
             {
                 var user = userList.Where(u => u._id.Equals(c.UserId)).FirstOrDefault();
                 retCommentsList.Add(c.ToCommentReturnDto(user));
@@ -192,6 +193,23 @@ namespace ProjectsHub.API.Services
 
             var shortPost = post.ToShortPost(user, isFollowed, userId);
             return shortPost;
+        }
+
+        public async Task<List<ShortPost>> GetUserPostsList(string loggedInUserId, string userIWantPostsId)
+        {
+            var postsIds = await _userService.GetUserPosts(userIWantPostsId);
+
+            var isFollowed = await _userService.IsFollowing(loggedInUserId, userIWantPostsId);
+            var user = await _userService.GetUserShortPeofile(userIWantPostsId);
+
+            var PostsListTasks = postsIds.Select(p => _postRepository.GetAsync(p));
+
+            var PostsList = await Task.WhenAll(PostsListTasks);
+
+
+            var shortPostList = PostsList.Select(p => p.ToShortPost(user, isFollowed, loggedInUserId)).ToList();
+
+            return shortPostList;
         }
     }
 }

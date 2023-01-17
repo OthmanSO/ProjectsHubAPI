@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProjectsHub.API.Services;
 using ProjectsHub.Core;
 using ProjectsHub.Exceptions;
 using ProjectsHub.Model;
@@ -171,6 +172,24 @@ namespace ProjectsHub.API.Controllers
             {
                 var shortPost = await _postService.GetShortPost(userId, postId);
                 return Ok(shortPost);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
+
+        [HttpGet("Post")]
+        [HttpGet("Post/{userId}")]
+        public async Task<ActionResult<List<ShortPost>>> GetUserPosts(string userId)
+        {
+            var userLoggedIn = _userToken.GetUserIdFromToken();
+            var userWantedPostsList = userId ?? userLoggedIn;
+            try
+            {
+                var listOfUsetPosts = await _postService.GetUserPostsList(userLoggedIn, userWantedPostsList);
+                return Ok(listOfUsetPosts);
             }
             catch (Exception)
             {
