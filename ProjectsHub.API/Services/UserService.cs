@@ -175,5 +175,14 @@ namespace ProjectsHub.API.Services
                 return false;
             return listOfFollowing.Any(x => x.Equals(authorId));
         }
+
+        internal async Task<List<string>> GetUserPosts(string userId)
+        {
+            var user = await _userRepository.GetAsync(userId);
+            if ( user.Posts == null)
+                return new List<string>();
+            
+            return user.Posts.ToList();
+        }
     }
 }
