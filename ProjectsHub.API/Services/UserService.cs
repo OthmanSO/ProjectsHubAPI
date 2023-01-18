@@ -184,5 +184,12 @@ namespace ProjectsHub.API.Services
             
             return user.Posts.ToList();
         }
+
+        internal async Task RemoveProject(string userId, string projectId)
+        {
+            var user = await _userRepository.GetAsync(userId);
+            user.Projects.Remove(projectId);
+            await _userRepository.UpdateAsync(userId, user);
+        }
     }
 }

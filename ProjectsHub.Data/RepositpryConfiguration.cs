@@ -13,5 +13,9 @@ namespace ProjectsHub.Data
         {
             services.AddTransient<IUserRepository, UserRepository>();
         }
+        public static void AddProjectRepository(this IServiceCollection services)
+        {
+            services.AddTransient<IProjectRepository, ProjectRepository>();
+        }
     }
 }

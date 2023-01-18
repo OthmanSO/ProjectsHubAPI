@@ -45,6 +45,7 @@ builder.Services.Configure<MongoDBOptions>(
     builder.Configuration.GetSection("MongoDB"));
 builder.Services.AddPostReopsitory();
 builder.Services.AddUserRepository();
+builder.Services.AddProjectRepository();
 
 var app = builder.Build();
 
