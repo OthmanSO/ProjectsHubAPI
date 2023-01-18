@@ -9,7 +9,7 @@ namespace ProjectsHub.API.Services
     public class ProjectService : IProjectService
     {
         private readonly IProjectRepository _projectRepository;
-        private readonly UserService _userService;  
+        private readonly UserService _userService;
 
         public ProjectService(IProjectRepository projectRepository, UserService userService)
         {
@@ -26,6 +26,8 @@ namespace ProjectsHub.API.Services
             var project = new Project().FromCreateProject(createProject, userId);
             project.CreatedDate = DateTime.UtcNow;
             project = await _projectRepository.CreateAsync(project);
+
+            await _userService.AddProject(userId ,project._id);
 
             Console.WriteLine($"user {userId} created project {project._id}");
 
@@ -56,14 +58,33 @@ namespace ProjectsHub.API.Services
             return project.ToProjectReturnDto(user, userId);
         }
 
-        public Task<ShortProject> GetShortProject(string userId, string projectId)
+        public async Task<ShortProject> GetShortProject(string userId, string projectId)
         {
-            throw new NotImplementedException();
+            var project = await _projectRepository.GetAsync(projectId);
+            if (project == null)
+                throw new Exception(nameof(project));
+            var user = await _userService.GetUserShortPeofile(userId);
+            var isFollowed = await _userService.IsFollowing(userId, project.AuthorId);
+
+            var shortPost = project.ToShortProject(user, isFollowed, userId);
+            return shortPost;
         }
 
-        public Task<List<ShortProject>> GetUserProjectList(string loggedInUser, string userWantedProjects)
+        public async Task<List<ShortProject>> GetUserProjectList(string loggedInUser, string userWantedProjects)
         {
-            throw new NotImplementedException();
+            var projectsIds = await _userService.GetUserProjects(userWantedProjects);
+
+            var isFollowed = await _userService.IsFollowing(loggedInUser, userWantedProjects);
+            var user = await _userService.GetUserShortPeofile(userWantedProjects);
+
+            var projectsListTasks = projectsIds.Select(p => _projectRepository.GetAsync(p));
+
+            var projectsList = await Task.WhenAll(projectsListTasks);
+
+
+            var shortProjectsList = projectsList.Select(p => p.ToShortProject(user, isFollowed,  userWantedProjects)).ToList();
+
+            return shortProjectsList;
         }
 
         public async Task LikeProject(string userId, string projectId)

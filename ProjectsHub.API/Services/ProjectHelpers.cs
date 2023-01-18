@@ -29,5 +29,18 @@ namespace ProjectsHub.API.Services
                 ProjectFile= project.ProjectFile,
                 IsLiked = project.UsersWhoLiked.Any(id => id.Equals(loggedInUserId))
             };
+
+        public static ShortProject ToShortProject(this Project post, UserShortProfileDto user, bool isFollowed, string userLoggedInId) =>
+            new ShortProject
+            {
+                _id = post._id,
+                Title = post.Title,
+                Author = user,
+                IsAuthorFollowed = isFollowed,
+                IsLiked = post.UsersWhoLiked.Any(user => user.Equals(userLoggedInId)),
+                UsersWhoLiked = post.UsersWhoLiked.Count,
+                CoverPicture = post.CoverPicture,
+                CreatedDate = post.CreatedDate
+            };
     }
 }

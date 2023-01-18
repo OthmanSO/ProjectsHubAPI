@@ -160,6 +160,12 @@ namespace ProjectsHub.API.Services
             user.Posts.Insert(0, postId);
             await _userRepository.UpdateAsync(userId, user);
         }
+        internal async Task AddProject(string userId, string projectId)
+        {
+            var user = await _userRepository.GetAsync(userId);
+            user.Projects.Insert(0, projectId);
+            await _userRepository.UpdateAsync(userId, user);
+        }
 
         internal async Task RemovePost(string userId, string postId)
         {
@@ -190,6 +196,15 @@ namespace ProjectsHub.API.Services
             var user = await _userRepository.GetAsync(userId);
             user.Projects.Remove(projectId);
             await _userRepository.UpdateAsync(userId, user);
+        }
+
+        internal async Task<List<string>> GetUserProjects(string userWantedProjects)
+        {
+            var user = await _userRepository.GetAsync(userWantedProjects);
+            if (user.Projects == null)
+                return new List<string>();
+
+            return user.Projects.ToList();
         }
     }
 }
