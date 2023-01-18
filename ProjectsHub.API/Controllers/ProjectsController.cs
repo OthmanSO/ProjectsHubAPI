@@ -27,6 +27,7 @@ namespace ProjectsHub.API.Controllers
         public async Task<IActionResult> PostingAProject([FromBody] CreateProjectDto project)
         {
             if (project == null || project.Title.IsNullOrEmpty() || project.CoverPicture.IsNullOrEmpty() || project.Abstract.IsNullOrEmpty())
+
             {
                 return BadRequest();
             }
@@ -112,7 +113,6 @@ namespace ProjectsHub.API.Controllers
                 return NotFound();
             }
         }
-
 
         [HttpGet("{projectId}/ShortProject")]
         public async Task<ActionResult<ShortProject>> GetShortProject(string projectId)

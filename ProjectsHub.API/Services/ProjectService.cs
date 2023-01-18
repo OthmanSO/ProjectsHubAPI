@@ -26,7 +26,7 @@ namespace ProjectsHub.API.Services
             var project = new Project().FromCreateProject(createProject, userId);
             project.CreatedDate = DateTime.UtcNow;
             project = await _projectRepository.CreateAsync(project);
-
+            
             await _userService.AddProject(userId ,project._id);
 
             Console.WriteLine($"user {userId} created project {project._id}");
