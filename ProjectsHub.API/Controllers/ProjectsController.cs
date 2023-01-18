@@ -26,7 +26,8 @@ namespace ProjectsHub.API.Controllers
         [HttpPost()]
         public async Task<IActionResult> PostingAProject([FromBody] CreateProjectDto project)
         {
-            if (project == null || project.Title.IsNullOrEmpty() || project.CoverPicture.IsNullOrEmpty())
+            if (project == null || project.Title.IsNullOrEmpty() || project.CoverPicture.IsNullOrEmpty() || project.Abstract.IsNullOrEmpty())
+
             {
                 return BadRequest();
             }
@@ -113,8 +114,7 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-
-        [HttpGet("{postId}/ShortProject")]
+        [HttpGet("{projectId}/ShortProject")]
         public async Task<ActionResult<ShortProject>> GetShortProject(string projectId)
         {
             var userId = _userToken.GetUserIdFromToken();
@@ -123,8 +123,9 @@ namespace ProjectsHub.API.Controllers
                 var shortProject = await _projectService.GetShortProject(userId, projectId);
                 return Ok(shortProject);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
                 return NotFound();
             }
         }
