@@ -41,6 +41,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IUserToken, UserToken>();
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();   
 builder.Services.Configure<MongoDBOptions>(
     builder.Configuration.GetSection("MongoDB"));
 builder.Services.AddPostReopsitory();
