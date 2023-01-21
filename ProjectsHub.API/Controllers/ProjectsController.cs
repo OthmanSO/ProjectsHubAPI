@@ -113,7 +113,6 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-
         [HttpGet("{projectId}/ShortProject")]
         public async Task<ActionResult<ShortProject>> GetShortProject(string projectId)
         {

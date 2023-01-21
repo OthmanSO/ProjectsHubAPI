@@ -115,7 +115,7 @@ namespace ProjectsHub.API.Services
             var user = await _userService.GetUserProfileById(userId);
             if (user == null)
                 throw new Exception();
-
+                
             var project = await _projectRepository.GetAsync(projectId);
             if (project == null) throw new Exception();
 
