@@ -206,5 +206,28 @@ namespace ProjectsHub.API.Services
 
             return user.Projects.ToList();
         }
+
+        internal async Task<List<UserNetworkProfile>> GetUserNetwork(string id, int pageNo)
+        {
+            var user = await _userRepository.GetAsync(id);
+            if (user == null)
+                throw new Exception();
+
+            try
+            {
+                var users = await _userRepository.GetAsync(user.Following, pageNo);
+
+                var userNetworkList = new List<UserNetworkProfile>();
+                foreach ( var usr in users)
+                {
+                    userNetworkList.Add(usr.ToUserNetworkProfile(id));
+                }
+                return userNetworkList;
+            }
+            catch (Exception ex)
+            {
+                return new List<UserNetworkProfile>();
+            }
+        }
     }
 }

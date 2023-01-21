@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using ProjectsHub.Core;
 using ProjectsHub.Model;
@@ -7,6 +8,7 @@ namespace ProjectsHub.Data
 {
     internal class UserRepository : IUserRepository
     {
+        private static readonly int PAGESIZE = 20;
         private readonly IMongoCollection<UserAccount> _userCollection;
         public UserRepository(IOptions<MongoDBOptions> options)
         {
@@ -34,5 +36,15 @@ namespace ProjectsHub.Data
 
         public async Task RemoveAsync(string id) =>
            await _userCollection.DeleteOneAsync(user => user._Id.Equals(id));
+
+        public async Task<List<UserAccount>> GetAsync(List<string> listOfFollowing, int pageNo)
+        {
+            return _userCollection.AsQueryable()
+                .Where(user => !listOfFollowing.Contains(user._Id))
+                .Select(user => user)
+                .Skip(PAGESIZE * (pageNo - 1))
+                .Take(PAGESIZE)
+                .ToList();
+        }
     }
 }

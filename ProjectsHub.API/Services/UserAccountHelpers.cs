@@ -44,5 +44,16 @@ namespace ProjectsHub.API.Services
                 Projects = userAccount.Projects != null ? userAccount.Projects.Take(5) : new List<string>()
             };
         }
+
+        public static UserNetworkProfile ToUserNetworkProfile(this UserAccount userAccount, string loggedinUserId) =>
+            new UserNetworkProfile
+            {
+                _id = userAccount._Id,
+                FirstName = userAccount.FirstName,
+                LastName = userAccount.LastName,
+                Bio = userAccount.Bio,
+                ProfilePic = userAccount.ProfilePicture,
+                IsFollowed = userAccount.Followers.Any(follower => follower.Equals(loggedinUserId))
+            };
     }
 }

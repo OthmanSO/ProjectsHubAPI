@@ -1,4 +1,5 @@
 ﻿
+using MongoDB.Bson;
 using ProjectsHub.Model;
 
 namespace ProjectsHub.Core
@@ -10,5 +11,6 @@ namespace ProjectsHub.Core
         public Task<UserAccount> CreateAsync(UserAccount userAccount);
         public Task UpdateAsync(string id, UserAccount updatedUserAccount);
         public Task RemoveAsync(string id);
+        public Task<List<UserAccount>> GetAsync(List<string> ListOfFollowing, int PageNo);
     }
 }

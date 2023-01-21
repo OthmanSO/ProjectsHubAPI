@@ -384,5 +384,28 @@ namespace ProjectsHub.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.StackTrace);
             }
         }
+
+        [Authorize]
+        [HttpGet("/api/V1.0/users/{pageNo}")]
+        public async Task<ActionResult<List<UserNetworkProfile>>> GetUserNetwork(int pageNo)
+        {
+            if (pageNo < 1)
+                pageNo = 1;
+
+            var id = _userToken.GetUserIdFromToken();
+
+            if (id == null)
+                return Unauthorized();
+
+            try
+            {
+                var listOfUserNetworkProfiles = await _UserService.GetUserNetwork(id, pageNo);
+                return Ok(listOfUserNetworkProfiles);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
