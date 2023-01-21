@@ -104,7 +104,7 @@ namespace ProjectsHub.API.Controllers
             var userId = _userToken.GetUserIdFromToken();
             try
             {
-                await _projectService.LikeProject(userId, projectId);
+                await _projectService.UnLikeProject(userId, projectId);
                 return Ok();
             }
             catch (Exception)

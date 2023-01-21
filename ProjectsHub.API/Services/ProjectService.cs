@@ -116,18 +116,18 @@ namespace ProjectsHub.API.Services
             if (user == null)
                 throw new Exception();
 
-            var post = await _projectRepository.GetAsync(projectId);
-            if (post == null) throw new Exception();
+            var project = await _projectRepository.GetAsync(projectId);
+            if (project == null) throw new Exception();
 
-            if (post.UsersWhoLiked.IsNullOrEmpty() || !post.UsersWhoLiked.Any(x => x.Equals(userId)))
+            if (project.UsersWhoLiked.IsNullOrEmpty() || !project.UsersWhoLiked.Any(x => x.Equals(userId)))
             {
                 return;
             }
-            post.UsersWhoLiked.Remove(userId);
+            project.UsersWhoLiked.Remove(userId);
 
             Console.WriteLine($"user {userId} unliked project {projectId}");
 
-            await _projectRepository.UpdateAsync(projectId, post);
+            await _projectRepository.UpdateAsync(projectId, project);
         }
     }
 }
