@@ -26,7 +26,7 @@ namespace ProjectsHub.API.Services
             var project = new Project().FromCreateProject(createProject, userId);
             project.CreatedDate = DateTime.UtcNow;
             project = await _projectRepository.CreateAsync(project);
-            
+
             await _userService.AddProject(userId ,project._id);
 
             Console.WriteLine($"user {userId} created project {project._id}");
@@ -115,19 +115,19 @@ namespace ProjectsHub.API.Services
             var user = await _userService.GetUserProfileById(userId);
             if (user == null)
                 throw new Exception();
+                
+            var project = await _projectRepository.GetAsync(projectId);
+            if (project == null) throw new Exception();
 
-            var post = await _projectRepository.GetAsync(projectId);
-            if (post == null) throw new Exception();
-
-            if (post.UsersWhoLiked.IsNullOrEmpty() || !post.UsersWhoLiked.Any(x => x.Equals(userId)))
+            if (project.UsersWhoLiked.IsNullOrEmpty() || !project.UsersWhoLiked.Any(x => x.Equals(userId)))
             {
                 return;
             }
-            post.UsersWhoLiked.Remove(userId);
+            project.UsersWhoLiked.Remove(userId);
 
             Console.WriteLine($"user {userId} unliked project {projectId}");
 
-            await _projectRepository.UpdateAsync(projectId, post);
+            await _projectRepository.UpdateAsync(projectId, project);
         }
     }
 }
