@@ -211,6 +211,20 @@ namespace ProjectsHub.API.Controllers
                 return NotFound();
             }
         }
-        
+
+        [HttpGet("/api/V1.0/Posts/Search/{query}/{pageNo}")]
+        public async Task<ActionResult<List<ShortPost>>> SearchPosts(string query, int pageNo)
+        {
+            var id = _userToken.GetUserIdFromToken();
+            try
+            {
+                var searchPostsList = await _postService.SearchPosts(id, query, pageNo);
+                return Ok(searchPostsList);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
     }
 }
