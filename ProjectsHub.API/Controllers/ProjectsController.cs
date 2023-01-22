@@ -143,5 +143,35 @@ namespace ProjectsHub.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet("/api/V1.0/Projects/{pageNo}")]
+        public async Task<ActionResult<List<ShortProject>>> GetProjectNewsFeed(int pageNo)
+        {
+            var id = _userToken.GetUserIdFromToken();
+            try
+            {
+                var newsFeedProjectsList = await _projectService.GetNewsFeedProjects(id, pageNo);
+                return Ok(newsFeedProjectsList);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("/api/V1.0/Projects/Search/{query}/{pageNo}")]
+        public async Task<ActionResult<List<ShortProject>>> SearchProjects(string query, int pageNo)
+        {
+            var id = _userToken.GetUserIdFromToken();
+            try
+            {
+                var searchProjectsList = await _projectService.SearchProjects(id, query, pageNo);
+                return Ok(searchProjectsList);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace ProjectsHub.Data
     internal class ProjectRepository : IProjectRepository
     {
         private readonly IMongoCollection<Project> _projectCollection;
+        private static readonly int PAGESIZE = 20;
         public ProjectRepository(IOptions<MongoDBOptions> options)
         {
             var mongoClient = new MongoClient(options.Value.ConnectionURI);
@@ -37,5 +38,26 @@ namespace ProjectsHub.Data
         public async Task RemoveAsync(string id) =>
             await _projectCollection.DeleteOneAsync(x => x._id.Equals(id));
 
+
+        public async Task<List<Project>> GetAsync(List<string> projectIdsList, int pageNo) =>
+            _projectCollection.AsQueryable()
+            .Where(project => projectIdsList.Contains(project._id))
+            .Select(project => project)
+            .OrderBy(project => project.CreatedDate)
+            .Skip(PAGESIZE * (pageNo - 1))
+            .Take(PAGESIZE)
+            .ToList();
+
+        public async Task<List<Project>> SearchAsync(string query, int pageNo) =>
+            _projectCollection.AsQueryable()
+            .Where(project =>
+                project.Title.Contains(query)
+                || project.Abstract.Contains(query)
+            )
+            .Select(project => project)
+            .OrderBy(project => project.CreatedDate)
+            .Skip(PAGESIZE * (pageNo - 1))
+            .Take(PAGESIZE)
+            .ToList();
     }
 }
