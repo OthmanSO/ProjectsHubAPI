@@ -11,5 +11,7 @@ namespace ProjectsHub.Core
         public Task UnLikeProject(string userId, string projectId);
         public Task<ShortProject> GetShortProject(string userId, string projectId);
         public Task<List<ShortProject>> GetUserProjectList(string loggedInUser, string userWantedProjects);
+        public Task<List<ShortProject>> GetNewsFeedProjects(string id, int pageNo);
+        public Task<List<ShortProject>> SearchProjects(string id, string query, int pageNo);
     }
 }

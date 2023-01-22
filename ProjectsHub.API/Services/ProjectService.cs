@@ -129,5 +129,39 @@ namespace ProjectsHub.API.Services
 
             await _projectRepository.UpdateAsync(projectId, project);
         }
+
+        public async Task<List<ShortProject>> GetNewsFeedProjects(string id, int pageNo)
+        {
+            var usersIds = await _userService.GetListOfFollwing(id);
+
+            var projectsIdsList = new List<string>();
+            foreach (var user in usersIds)
+            {
+                var postIds = await _userService.GetUserProjects(user);
+                postIds.ForEach(postId => projectsIdsList.Add(postId));
+            }
+
+            var listOfReturnProjects = await _projectRepository.GetAsync(projectsIdsList, pageNo);
+
+
+            var listOfShortProjectsTasksReturn = listOfReturnProjects.Select(async p => p.ToShortProject(await _userService.GetUserShortPeofile(p.AuthorId), true, id)).ToList();
+
+            var listOfShortPojectsReturn = await Task.WhenAll(listOfShortProjectsTasksReturn);
+
+            return listOfShortPojectsReturn.Select(s => s).ToList();
+        }
+
+        public async Task<List<ShortProject>> SearchProjects(string id, string query, int pageNo)
+        {
+            var projects = await _projectRepository.SearchAsync(query, pageNo);
+
+            var listOfTaskShortProjects = projects.Select(async p =>
+                p.ToShortProject(
+                    await _userService.GetUserShortPeofile(p.AuthorId),
+                    await _userService.IsFollowing(id, p.AuthorId),
+                    id));
+            var listOfShortProjects = await Task.WhenAll(listOfTaskShortProjects);
+            return listOfShortProjects.Select(s => s).ToList();
+        }
     }
 }
