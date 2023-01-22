@@ -156,7 +156,7 @@ namespace ProjectsHub.API.Services
             var projects = await _projectRepository.SearchAsync(query, pageNo);
 
             var listOfTaskShortProjects = projects.Select(async p =>
-                p.ToShortPost(
+                p.ToShortProject(
                     await _userService.GetUserShortPeofile(p.AuthorId),
                     await _userService.IsFollowing(id, p.AuthorId),
                     id));
