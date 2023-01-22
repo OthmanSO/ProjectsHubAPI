@@ -3,6 +3,7 @@ using ProjectsHub.Model;
 using ProjectsHub.Exceptions;
 using Microsoft.IdentityModel.Tokens;
 using System.Xml.Linq;
+using Microsoft.Extensions.Hosting;
 
 namespace ProjectsHub.API.Services
 {
@@ -206,10 +207,30 @@ namespace ProjectsHub.API.Services
 
             var PostsList = await Task.WhenAll(PostsListTasks);
 
-
             var shortPostList = PostsList.Select(p => p.ToShortPost(user, isFollowed, loggedInUserId)).ToList();
 
             return shortPostList;
+        }
+
+        public async Task<List<ShortPost>> GetNewsFeedPosts(string id, int pageNo)
+        {
+            var usersIds = await _userService.GetListOfFollwing(id);
+
+            var postsIdsList = new List<string>();
+            foreach ( var user in usersIds)
+            {
+                var postIds = await _userService.GetUserPosts(user);
+                postIds.ForEach(postId => postsIdsList.Add(postId));
+            }
+
+            var listOfReturnPosts = await _postRepository.GetAsync(postsIdsList ,pageNo);
+
+
+            var listOfShortPostsTasksReturn = listOfReturnPosts.Select(async p => p.ToShortPost(await _userService.GetUserShortPeofile(p.AuthorId), true, id)).ToList();
+
+            var dumb = await Task.WhenAll(listOfShortPostsTasksReturn);
+
+            return dumb.Select(s => s).ToList();
         }
     }
 }
