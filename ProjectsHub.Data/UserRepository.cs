@@ -46,5 +46,17 @@ namespace ProjectsHub.Data
                 .Take(PAGESIZE)
                 .ToList();
         }
+
+        public async Task<List<UserAccount>> SearchAsync(string query, int pageNo, string loggedInUserId) =>
+             _userCollection
+            .AsQueryable()
+            .Where(user => (
+            user.FirstName.ToLower().Contains(query.ToLower()) 
+            || user.LastName.ToLower().Contains(query.ToLower())))
+            .Where(user => !user._Id.Equals(loggedInUserId))
+            .Select(user => user)
+            .Skip(PAGESIZE * (pageNo - 1))
+            .Take(PAGESIZE)
+            .ToList();
     }
 }
