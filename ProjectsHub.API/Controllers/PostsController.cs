@@ -196,5 +196,21 @@ namespace ProjectsHub.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet("/api/V1.0/Posts/{pageNo}")]
+        public async Task<ActionResult<List<ShortPost>>> GetPostNewsFeed(int pageNo)
+        {
+            var id = _userToken.GetUserIdFromToken();
+            try
+            {
+                var newsFeedPostsList = await _postService.GetNewsFeedPosts(id, pageNo);
+                return Ok(newsFeedPostsList);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+        
     }
 }

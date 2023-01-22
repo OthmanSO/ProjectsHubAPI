@@ -10,5 +10,6 @@ namespace ProjectsHub.Core
         public Task<Post> CreateAsync(Post newPost);
         public Task UpdateAsync(string id, Post updatedPost);
         public Task RemoveAsync(string id);
+        public Task<List<Post>> GetAsync(List<string> postIdsList, int pageNo);
     }
 }
