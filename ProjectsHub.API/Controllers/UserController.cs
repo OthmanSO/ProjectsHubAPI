@@ -407,5 +407,32 @@ namespace ProjectsHub.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [Authorize]
+        [HttpGet("/api/V1.0/users/Search/{query}/{pageNo}")]
+        public async Task<ActionResult<List<UserNetworkProfile>>> SearchUserNetwork(string query, int pageNo)
+        {
+            if (pageNo < 1)
+                pageNo = 1;
+
+            if (query.IsNullOrEmpty())
+                return Ok(new List<UserNetworkProfile>());
+
+            var id = _userToken.GetUserIdFromToken();
+
+            if (id == null)
+                return Unauthorized();
+
+            try
+            {
+                var listOfUserNetworkProfiles = await _UserService.SearchUserNetwork(query, id, pageNo);
+                return Ok(listOfUserNetworkProfiles);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
     }
 }

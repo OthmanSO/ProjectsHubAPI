@@ -61,9 +61,6 @@ namespace ProjectsHub.API.Controllers
             }
         }
 
-       
-
-
         [HttpDelete("{projectId}")]
         public async Task<IActionResult> DeleteProject(string projectId)
         {

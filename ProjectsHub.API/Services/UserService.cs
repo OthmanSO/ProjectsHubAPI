@@ -21,7 +21,7 @@ namespace ProjectsHub.API.Services
                 return user;
             throw new UserPasswordNotMatchedException();
         }
-        
+
         public async Task<UserAccount> CreateUser(UserAccountCreate user)
         {
             if (!user.IsValidEmail())
@@ -177,7 +177,7 @@ namespace ProjectsHub.API.Services
         internal async Task<bool> IsFollowing(string userId, string authorId)
         {
             var listOfFollowing = await GetListOfFollwing(userId);
-            if (listOfFollowing == null) 
+            if (listOfFollowing == null)
                 return false;
             return listOfFollowing.Any(x => x.Equals(authorId));
         }
@@ -185,9 +185,9 @@ namespace ProjectsHub.API.Services
         internal async Task<List<string>> GetUserPosts(string userId)
         {
             var user = await _userRepository.GetAsync(userId);
-            if ( user.Posts == null)
+            if (user.Posts == null)
                 return new List<string>();
-            
+
             return user.Posts.ToList();
         }
 
@@ -218,14 +218,38 @@ namespace ProjectsHub.API.Services
                 var users = await _userRepository.GetAsync(user.Following, pageNo);
 
                 var userNetworkList = new List<UserNetworkProfile>();
-                foreach ( var usr in users)
+                foreach (var usr in users)
                 {
                     userNetworkList.Add(usr.ToUserNetworkProfile(id));
                 }
                 return userNetworkList;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                return new List<UserNetworkProfile>();
+            }
+        }
+
+        internal async Task<List<UserNetworkProfile>> SearchUserNetwork(string query, string id, int pageNo)
+        {
+            var user = await _userRepository.GetAsync(id);
+            if (user == null)
+                throw new Exception();
+
+            try
+            {
+                var users = await _userRepository.SearchAsync(query, pageNo, id);
+
+                var userNetworkList = new List<UserNetworkProfile>();
+                foreach (var usr in users)
+                {
+                    userNetworkList.Add(usr.ToUserNetworkProfile(id));
+                }
+                return userNetworkList;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
                 return new List<UserNetworkProfile>();
             }
         }
