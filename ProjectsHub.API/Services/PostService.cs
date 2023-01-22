@@ -228,9 +228,22 @@ namespace ProjectsHub.API.Services
 
             var listOfShortPostsTasksReturn = listOfReturnPosts.Select(async p => p.ToShortPost(await _userService.GetUserShortPeofile(p.AuthorId), true, id)).ToList();
 
-            var dumb = await Task.WhenAll(listOfShortPostsTasksReturn);
+            var listOfShortPostsReturn = await Task.WhenAll(listOfShortPostsTasksReturn);
 
-            return dumb.Select(s => s).ToList();
+            return listOfShortPostsReturn.Select(s => s).ToList();
+        }
+
+        public async Task<List<ShortPost>> SearchPosts(string id, string query, int pageNo)
+        {
+            var posts = await _postRepository.SearchAsync(query, pageNo);
+
+            var listOfTaskShortPosts = posts.Select(async p =>
+                p.ToShortPost(
+                    await _userService.GetUserShortPeofile(p.AuthorId),
+                    await _userService.IsFollowing(id, p.AuthorId),
+                    id));
+            var listOfShortPosts = await Task.WhenAll(listOfTaskShortPosts);
+            return listOfShortPosts.Select(s => s).ToList();
         }
     }
 }

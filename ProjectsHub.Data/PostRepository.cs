@@ -47,5 +47,18 @@ namespace ProjectsHub.Data
             .Skip(PAGESIZE * (pageNo - 1))
             .Take(PAGESIZE)
             .ToList();
+
+        public async Task<List<Post>> SearchAsync(string query, int pageNo) =>
+            _postCollection.AsQueryable()
+            .Where(post =>
+                post.Title.Contains(query)
+                || post.PostChunks.Any(c =>
+                    c.Body.Contains(query))
+            )
+            .Select(post => post)
+            .OrderBy(post => post.CreatedDate)
+            .Skip(PAGESIZE * (pageNo - 1))
+            .Take(PAGESIZE)
+            .ToList();
     }
 }

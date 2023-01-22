@@ -15,5 +15,6 @@ namespace ProjectsHub.Core
         public Task<ShortPost> GetShortPost(string userId, string postId);
         public Task<List<ShortPost>> GetUserPostsList(string id, string userId);
         public Task<List<ShortPost>> GetNewsFeedPosts(string id, int pageNo);
+        public Task<List<ShortPost>> SearchPosts(string id, string query, int pageNo);
     }
 }
