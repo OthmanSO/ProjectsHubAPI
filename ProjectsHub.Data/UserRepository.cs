@@ -37,10 +37,11 @@ namespace ProjectsHub.Data
         public async Task RemoveAsync(string id) =>
            await _userCollection.DeleteOneAsync(user => user._Id.Equals(id));
 
-        public async Task<List<UserAccount>> GetAsync(List<string> listOfFollowing, int pageNo)
+        public async Task<List<UserAccount>> GetAsync(List<string> listOfFollowing, int pageNo, string loggedInUser)
         {
             return _userCollection.AsQueryable()
                 .Where(user => !listOfFollowing.Contains(user._Id))
+                .Where(user => !user._Id.Equals(loggedInUser))
                 .Select(user => user)
                 .Skip(PAGESIZE * (pageNo - 1))
                 .Take(PAGESIZE)

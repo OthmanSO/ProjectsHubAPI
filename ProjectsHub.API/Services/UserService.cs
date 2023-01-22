@@ -215,7 +215,7 @@ namespace ProjectsHub.API.Services
 
             try
             {
-                var users = await _userRepository.GetAsync(user.Following, pageNo);
+                var users = await _userRepository.GetAsync(user.Following, pageNo, id);
 
                 var userNetworkList = new List<UserNetworkProfile>();
                 foreach (var usr in users)

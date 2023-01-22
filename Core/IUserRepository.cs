@@ -11,7 +11,7 @@ namespace ProjectsHub.Core
         public Task<UserAccount> CreateAsync(UserAccount userAccount);
         public Task UpdateAsync(string id, UserAccount updatedUserAccount);
         public Task RemoveAsync(string id);
-        public Task<List<UserAccount>> GetAsync(List<string> ListOfFollowing, int PageNo);
+        public Task<List<UserAccount>> GetAsync(List<string> ListOfFollowing, int PageNo, string loggedInUserId);
         public Task<List<UserAccount>> SearchAsync(string query, int pageNo,string loggedInUserId);
     }
 }
